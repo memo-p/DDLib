@@ -1,0 +1,6 @@
+build/
+debug/
+Debug/
+Release/
+release/
+.vscode/
