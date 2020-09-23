@@ -35,7 +35,6 @@
 #include "DataStructures/BitSets.hpp"
 #include "DataStructures/SparseSet.hpp"
 #include "Utils/ChronoP.hpp"
-#include "Utils/utils.hpp"
 
 namespace MDD {
 
