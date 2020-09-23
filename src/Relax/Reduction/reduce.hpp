@@ -35,7 +35,6 @@
 #include "DataStructures/SparseSet.hpp"
 #include "Relax/Partitioner.hpp"
 #include "Utils/ChronoP.hpp"
-#include "Utils/utils.hpp"
 
 namespace MDD {
 
