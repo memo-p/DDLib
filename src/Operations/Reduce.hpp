@@ -32,6 +32,7 @@
 #include "Core/MDD.hpp"
 #include "DataStructures/SparseSet.hpp"
 #include "Utils/ChronoP.hpp"
+#include "Utils/union.hpp"
 
 namespace MDD {
 
