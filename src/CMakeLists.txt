@@ -29,16 +29,16 @@ DataStructures/list.hpp
 DataStructures/orderedList.hpp
 DataStructures/SparseSet.hpp
 DataStructures/Table.hpp
-DataStructures/TableBuilder.h
+DataStructures/TableBuilder.hpp
 DataStructures/TableSort.hpp
 Operations/Apply.hpp
 Operations/Reduce.hpp
-Operations/ReduceDSFMap.hpp
+Operations/ReduceDFSMap.hpp
 Operations/Search.hpp
 Utils/ChronoP.hpp
 Utils/MDDInfos.hpp
-Utils/ThreadPool.hpp
-Utils/utils.hpp
+Utils/ThreadPool.h
+Utils/union.hpp
 Relax/Creation/DPRelaxCreation.hpp
 Relax/Reduction/reduce.hpp
 Relax/Partitioner.hpp
@@ -47,7 +47,7 @@ Relax/Utils.hpp
 )
 
 set(LIB_NAME "MDD")
-add_library(${LIB_NAME} STATIC ${SOURCE} ${HEADER})
+add_library(${LIB_NAME} STATIC ${SOURCE} ${HEADERS})
 
 target_link_libraries(${LIB_NAME} infInt cxxopts json-nlohmann)
 
