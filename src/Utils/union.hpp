@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_UTILS_UTILS
-#define SRC_UTILS_UTILS
+#ifndef SRC_UTILS_UNION
+#define SRC_UTILS_UNION
 
 #include <vector>
 
@@ -67,4 +67,4 @@ inline bool isPermutation(int* t, int size) {
 }
 }  // namespace MDD
 
-#endif /* SRC_UTILS_UTILS */
+#endif /* SRC_UTILS_UNION */
