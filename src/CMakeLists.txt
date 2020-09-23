@@ -16,6 +16,7 @@ Utils/ChronoP.cpp
 Utils/MDDInfos.cpp
 )
 set(HEADERS
+mdds.hpp
 Constructions/MDDBuilder.hpp
 Constructions/BuilderFromAutomaton.hpp
 Constructions/BuilderTransitions.hpp
@@ -39,8 +40,10 @@ Utils/MDDInfos.hpp
 Utils/ThreadPool.hpp
 Utils/utils.hpp
 Relax/Creation/DPRelaxCreation.hpp
-Relax/State.hpp
 Relax/Reduction/reduce.hpp
+Relax/Partitioner.hpp
+Relax/State.hpp
+Relax/Utils.hpp
 )
 
 set(LIB_NAME "MDD")

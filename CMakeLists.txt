@@ -12,20 +12,46 @@ if(DCMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CXX_FLAGS_REQUIRED ${CXX_FLAGS_REQUIRED} -g2)
 endif()
 
+
+
+#####CMAKE OPTIONS
+option(ALL_MDD "ALL_MDD" OFF)
+option(BENCHMARKS_MDD "BENCHMARKS_MDD" OFF)
+option(TESTS_MDD "TESTS_MDD" OFF)
+
+if(ALL_MDD)
+  set(BENCHMARKS_MDD ON)
+  set(TESTS_MDD ON)
+endif()
+
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(SYSTEM "3rdparty/InfInt/include")
-add_subdirectory(3rdparty/InfInt)
-add_subdirectory(3rdparty/cxxopts-2.2.0)
-add_subdirectory(3rdparty/nlohmann-json-3.7.3)
+if (NOT TARGET InfInt)
+  include_directories(SYSTEM "3rdparty/InfInt/include")
+  add_subdirectory(3rdparty/InfInt)
+endif() 
+
+if (NOT TARGET cxxopts)
+  add_subdirectory(3rdparty/cxxopts-2.2.0)
+endif() 
+if (NOT TARGET json-nlohmann)
+  add_subdirectory(3rdparty/nlohmann-json-3.7.3)
+endif() 
+
 add_subdirectory(src)
 
+if(BENCHMARKS_MDD)
+  add_subdirectory(benchs)
+endif()
 
-add_subdirectory(benchs)
-
-include(CTest)
-add_subdirectory(3rdparty/catch)
-add_subdirectory(test)
+if(TESTS_MDD)
+  include(CTest)
+  if (NOT TARGET catch)
+    add_subdirectory(3rdparty/catch)
+  endif() 
+  add_subdirectory(test)
+endif()
 
