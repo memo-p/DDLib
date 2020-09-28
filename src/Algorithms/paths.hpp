@@ -51,7 +51,7 @@ class LongestPathBFS : public BreadthFirstSearch {
                  longest_past_[a->Start()->UID()] + a->Value());
   }
   /**
-   * Return the number of tuples processed.
+   * Return the Longest Path size.
    **/
   int GetLongestPath() { return longest_past_[GetMDD().Final()->UID()]; }
 };

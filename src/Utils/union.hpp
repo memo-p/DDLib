@@ -34,7 +34,7 @@ class unionFind {
   int size_;
 
  public:
-  unionFind(int size_) : lead_(size_), size_(size_) { clear(); }
+  unionFind(int size) : lead_(size), size_(size) { clear(); }
 
   int leader(int v) {
     if (lead_[v] == v) {

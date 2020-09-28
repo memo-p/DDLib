@@ -37,7 +37,6 @@ Operations/ReduceDFSMap.hpp
 Operations/Search.hpp
 Utils/ChronoP.hpp
 Utils/MDDInfos.hpp
-Utils/ThreadPool.h
 Utils/union.hpp
 Relax/Creation/DPRelaxCreation.hpp
 Relax/Reduction/reduce.hpp

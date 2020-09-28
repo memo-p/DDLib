@@ -26,7 +26,7 @@
 namespace MDD {
 
 MDDBuilderFromTable::MDDBuilderFromTable(TableOfTuple& table, int* order)
-    : table_(table), order_(order) {}
+    : table_(table), order_(order),order_local_(false) {}
 
 MDD* MDDBuilderFromTable::Build() {
   MDD* mdd = new MDD(table_.NumberOfVar());
