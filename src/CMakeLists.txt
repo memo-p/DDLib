@@ -31,6 +31,10 @@ DataStructures/SparseSet.hpp
 DataStructures/Table.hpp
 DataStructures/TableBuilder.hpp
 DataStructures/TableSort.hpp
+DynamicProg/ApplyDP.hpp
+DynamicProg/DynP.hpp
+DynamicProg/DynSum.hpp
+DynamicProg/IndepSet.hpp
 Operations/Apply.hpp
 Operations/Reduce.hpp
 Operations/ReduceDFSMap.hpp

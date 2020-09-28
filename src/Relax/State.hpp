@@ -61,7 +61,7 @@ class BasicState : public State {
   void Set(T value) { value_ = value; }
 
   T Value() const { return value_; }
-  std::string to_string() override { return std::to_string(value_); };
+  std::string to_string() override { return std::to_string(value_); }
 
   operator T() const { return value_; }
 
@@ -106,7 +106,7 @@ class SetState : public State, public BitSet {
       oss << v.back();
     }
     return oss.str();
-  };
+  }
 };
 
 }  // namespace MDD
