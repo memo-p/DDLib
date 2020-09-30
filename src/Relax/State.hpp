@@ -45,7 +45,15 @@ namespace MDD {
 class State {
  public:
   virtual ~State() {}
+  /**
+   * Unique string that represent the state.
+   **/
   virtual std::string to_string() = 0;
+
+  /**
+   * Rank that can be used for some partitioning heuristic.
+   **/
+  virtual int Rank() { return 0; }
 };
 
 /**
@@ -85,6 +93,8 @@ class BasicState : public State {
   T operator|(T v) { return value_ | v; }
 
   T operator~() { return ~value_; }
+
+  int Rank() override { return value_; }
 };
 
 typedef BasicState<int> IntState;

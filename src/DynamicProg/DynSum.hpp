@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Guillaume Perez
+ * Copyright (c) 2020 Guillaume Perez
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -80,32 +80,5 @@ class SumDynProg : public DynamicProgram {
 };
 
 }  // namespace MDD
-
-// /**
-//      * Return the two nodes with the largest value
-//      **/
-//     void Select(const DblList<Node>& layer,
-//                 std::vector<Node*>& to_merge) override {
-//       to_merge.resize(2, nullptr);
-//       Node* n = layer.First();
-//       int v0, v1;
-//       while (n) {
-//         auto s = static_cast<IntState*>(States()[n->UID()]);
-//         if (to_merge[0] == nullptr) {
-//           to_merge[0] = n;
-//           v0 = *s;
-//         } else if (to_merge[1] == nullptr) {
-//           to_merge[1] = n;
-//           v1 = *s;
-//         } else if (v0 < *s) {
-//           to_merge[0] = n;
-//           v0 = *s;
-//         } else if (v1 < *s) {
-//           to_merge[1] = n;
-//           v1 = *s;
-//         }
-//         n = n->Next();
-//       }
-//     }
 
 #endif /* SRC_DYNAMICPROG_DYNSUM */

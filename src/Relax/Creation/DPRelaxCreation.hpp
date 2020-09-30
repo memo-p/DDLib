@@ -117,6 +117,7 @@ class DynamicProgRelaxCreation : public MDDBuilder {
     std::vector<Node*> to_merge;
     mdd_ = new MDD(nb_vars_);
     mdd_->BuildRootAndFinalNodes();
+    mdd_->setDomSize(domain_size_);
     states_[mdd_->Root()->UID()] = root_state_;
     for (int depth = 0; depth < mdd_->Size(); depth += DepthRelax() + 1) {
       Node* n = mdd_->getNodeLvl(depth);
