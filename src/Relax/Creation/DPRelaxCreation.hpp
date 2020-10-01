@@ -128,10 +128,11 @@ class DynamicProgRelaxCreation : public MDDBuilder {
       RelaxReduce reducer(*mdd_, WidthRelax(), partitioner_, false);
       for (int i = 0; i < DepthRelax() + 1; i++) {
         const int local_depth = depth + 1 + i;
-        if (i < DepthRelax() && local_depth < mdd_->Size()) {
-          reducer.ReduceLayer(local_depth);
-        } else if (local_depth >= mdd_->Size()) {
+        if (local_depth >= mdd_->Size()) {
           break;
+        } 
+        if (i < DepthRelax()) {
+          reducer.ReduceLayer(local_depth);
         } else {
           reducer.ReduceLayer(local_depth, false);
           rebuildStates(local_depth, reducer);
@@ -219,6 +220,8 @@ class DynamicProgRelaxCreation : public MDDBuilder {
   int DepthRelax() const { return depth_relax_; }
   int WidthRelax() const { return width_relax_; }
   int64_t elapsed_m_second() { return chrono_build_.elapsed_m_second(); }
+
+  void SetPartitioner(Partitioner *partitioner) {partitioner_ = partitioner; }
 
 };  // namespace MDD
 

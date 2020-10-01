@@ -39,20 +39,23 @@ namespace MDD {
 
 /**
  * Partitioning of nodes for state construction.
+ * 
+ * This is currently not usable since the reduction
+ * does not automatically maintains the states.
  **/
 class StatePartitioner : public Partitioner {
  private:
-  DynamicProgRelaxCreation &dpc_;
+  DynamicProgRelaxCreation *dpc_;
 
  public:
-  StatePartitioner(DynamicProgRelaxCreation &dpc) : dpc_(dpc) {}
+  StatePartitioner(DynamicProgRelaxCreation *dpc) : dpc_(dpc) {}
 
   /**
    * Return the DP currently being build.
    **/
-  DynamicProgRelaxCreation &DPC() { return dpc_; }
+  DynamicProgRelaxCreation &DPC() { return *dpc_; }
 
-  State *GetState(Node *n) { return DPC().States()[n->UID()]; }
+  State *GetState(Node *n) { return DPC().States().at(n->UID()); }
 };
 
 /**
@@ -63,7 +66,7 @@ class MaxRankPartitioner : public StatePartitioner {
   std::priority_queue<Node *> nodes_;
 
  public:
-  MaxRankPartitioner(DynamicProgRelaxCreation &dpc) : StatePartitioner(dpc) {}
+  MaxRankPartitioner(DynamicProgRelaxCreation *dpc) : StatePartitioner(dpc) {}
 
   void Partition(const DblList<Node> &layer,
                  std::vector<std::set<Node *>> &partition) override {

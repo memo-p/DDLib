@@ -26,8 +26,8 @@
 
 namespace MDD {
 
-Arc *Arc::allocated = nullptr;
-Node *Node::allocated = nullptr;
+thread_local Arc *Arc::allocated = nullptr;
+thread_local Node *Node::allocated = nullptr;
 
 //////////////////////////
 //////////// ARC ////////
