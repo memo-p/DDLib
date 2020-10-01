@@ -71,7 +71,7 @@ class MaxRankPartitioner : public StatePartitioner {
   void Partition(const DblList<Node> &layer,
                  std::vector<std::set<Node *>> &partition) override {
     assert(layer.Size() > 1);
-    const int max_width = partition.size();
+    const uint64_t max_width = partition.size();
     assert(max_width > 0);
     auto gt = [this](Node *e1, Node *e2) {
       return GetState(e1)->Rank() > GetState(e2)->Rank();
@@ -82,7 +82,7 @@ class MaxRankPartitioner : public StatePartitioner {
       queue.push(n);
       n = n->Next();
     }
-    int i = 0;
+    uint64_t i = 0;
     while (!queue.empty()) {
       n = queue.top();
       queue.pop();

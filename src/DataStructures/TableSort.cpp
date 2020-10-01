@@ -33,7 +33,7 @@ int* TableSortCount::sortedIndex(const TableOfTuple& table) {
   int* tmp_;
   int size = table.getDomSize(0);
   for (size_t i = 0; i < table.NumberOfTuples(); ++i) {
-    res[i] = i;
+    res[i] = static_cast<int>(i);
     tmpres[i] = -1;
   }
 

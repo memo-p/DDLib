@@ -47,7 +47,7 @@ class IndepSetState : public State {
   int sp_;
 
  public:
-  IndepSetState(int is, int nb_elements, bool full = false)
+  IndepSetState(int is, uint64_t nb_elements, bool full = false)
       : is_(is), bs_(nb_elements, full), sp_(0) {}
 
   std::string to_string() override {
@@ -125,7 +125,7 @@ class MISP : public DynamicProgram {
     ss << "graph G {" << std::endl;
     for (size_t i = 0; i < neighbors_.size(); i++) {
       auto& bs = neighbors_[i];
-      for (int j = i + 1; j < bs.MaxNbElements(); j++) {
+      for (size_t j = i + 1; j < bs.MaxNbElements(); j++) {
         if (bs.Contains(j)) {
           ss << std::to_string(i) << "--" << std::to_string(j) << std::endl;
         }
