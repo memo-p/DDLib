@@ -28,6 +28,7 @@
 #include <Core/MDD.hpp>
 #include <DynamicProg/IndepSet.hpp>
 #include <Relax/Creation/DPRelaxCreation.hpp>
+#include <Relax/Partitioners/StatePartitioner.hpp>
 #include <cxxopts.hpp>
 #include <random>
 #include <unordered_map>
@@ -47,7 +48,7 @@ void RelaxIndependentSet(int argc, char* argv[]) {
   options.add_options()("s,seed", "seed for random",
                         cxxopts::value<int>()->default_value("0"));
   options.add_options()("partitioner",
-                        "Algorithm for selecting nodes to merge (last, random)",
+                        "Algorithm for selecting nodes to merge (last, random, max)",
                         cxxopts::value<std::string>()->default_value("last"));
   options.add_options()(
       "m,mdd", "Draw the MDD (dot/graphviz)",
@@ -97,6 +98,7 @@ void RelaxIndependentSet(int argc, char* argv[]) {
     partitioner = new Partitioner();
   } else if (part_algo == "random") {
     partitioner = new RandomPartitioner();
+  } else if (part_algo == "max") {
   } else {
     std::cout << "bad partition algorithm : " << part_algo << std::endl;
     std::cout << options.help() << std::endl;
@@ -113,6 +115,11 @@ void RelaxIndependentSet(int argc, char* argv[]) {
 
   MISP misp(neighbors);
   DynamicProgRelaxCreation dprc(nb_nodes, 2, &misp, partitioner, width, depth);
+
+  if (part_algo == "max") {
+    partitioner = new MaxRankPartitioner(&dprc);
+    dprc.SetPartitioner(partitioner);
+  }
 
   if (draw_graph) {
     std::cout << "**** GRAPH ****" << std::endl;

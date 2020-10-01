@@ -43,7 +43,7 @@ class Node;
  **/
 class Arc : public DblListElement<Arc> {
  public:
-  static Arc *allocated;
+  static thread_local Arc *allocated;
 
   void *operator new(std::size_t count);
 
@@ -74,7 +74,7 @@ class Arc : public DblListElement<Arc> {
 
 class Node : public DblListElement<Node> {
  public:
-  static Node *allocated;
+  static thread_local Node *allocated;
 
   void *operator new(std::size_t count);
   void operator delete(void *ptr);

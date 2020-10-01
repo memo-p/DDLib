@@ -143,7 +143,7 @@ class BitSet {
   void Union(const BitSet &bs);
   void Not();
 
-  int MaxNbElements() const { return nb_element_; }
+  uint64_t MaxNbElements() const { return nb_element_; }
 
   inline uint64_t operator[](int i) const { return words_[i]; }
   uint64_t GetSize() const { return size_; }

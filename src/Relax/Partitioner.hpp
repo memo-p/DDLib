@@ -52,10 +52,10 @@ class Partitioner {
   virtual void Partition(const DblList<Node> &layer,
                          std::vector<std::set<Node *>> &partition) {
     assert(layer.Size() > 1);
-    const int max_width = partition.size();
+    const size_t max_width = partition.size();
     assert(max_width > 0);
     Node *n = layer.First();
-    int i = 0;
+    uint64_t i = 0;
     while (n) {
       partition[i].insert(n);
       if (i + 1 < max_width) {
@@ -74,18 +74,15 @@ class RandomPartitioner : public Partitioner {
   void Partition(const DblList<Node> &layer,
                  std::vector<std::set<Node *>> &partition) override {
     assert(layer.Size() > 1);
-    const int max_width = partition.size();
+    const uint64_t max_width = partition.size();
     assert(max_width > 0);
     std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(0, max_width - 1);
+    std::uniform_int_distribution<uint64_t> distribution(0, max_width - 1);
 
     Node *n = layer.First();
     while (n) {
-      int i = distribution(generator);
+      uint64_t i = distribution(generator);
       partition[i].insert(n);
-      if (i + 1 < max_width) {
-        i++;
-      }
       n = n->Next();
     }
   }

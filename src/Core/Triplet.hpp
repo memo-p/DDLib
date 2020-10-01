@@ -34,7 +34,7 @@ namespace MDD {
 
 class Triplet {
  public:
-  static Triplet *allocated;
+  static thread_local Triplet *allocated;
   void *operator new(std::size_t count) {
     if (allocated == nullptr) {
       char *m = (char *)::new char[count * NBALLOC];

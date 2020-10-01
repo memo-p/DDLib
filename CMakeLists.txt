@@ -6,7 +6,7 @@ project(mdd_lib)
 #### COMPILER OPTIONS 
 set(CMAKE_CXX_STANDARD 11)
 
-set(CXX_FLAGS_REQUIRED -Wall -Wextra)
+set(CXX_FLAGS_REQUIRED -Wall -Wextra -pedantic-errors -Wconversion)
 
 if(DCMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CXX_FLAGS_REQUIRED ${CXX_FLAGS_REQUIRED} -g2)
@@ -35,6 +35,7 @@ if (NOT TARGET InfInt)
 endif() 
 
 if (NOT TARGET cxxopts)
+  include_directories(SYSTEM "3rdparty/cxxopts-2.2.0/include")
   add_subdirectory(3rdparty/cxxopts-2.2.0)
 endif() 
 if (NOT TARGET json-nlohmann)

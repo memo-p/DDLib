@@ -45,7 +45,15 @@ namespace MDD {
 class State {
  public:
   virtual ~State() {}
+  /**
+   * Unique string that represent the state.
+   **/
   virtual std::string to_string() = 0;
+
+  /**
+   * Rank that can be used for some partitioning heuristic.
+   **/
+  virtual int Rank() { return 0; }
 };
 
 /**
@@ -61,7 +69,7 @@ class BasicState : public State {
   void Set(T value) { value_ = value; }
 
   T Value() const { return value_; }
-  std::string to_string() override { return std::to_string(value_); };
+  std::string to_string() override { return std::to_string(value_); }
 
   operator T() const { return value_; }
 
@@ -85,6 +93,8 @@ class BasicState : public State {
   T operator|(T v) { return value_ | v; }
 
   T operator~() { return ~value_; }
+
+  int Rank() override { return value_; }
 };
 
 typedef BasicState<int> IntState;
@@ -106,7 +116,7 @@ class SetState : public State, public BitSet {
       oss << v.back();
     }
     return oss.str();
-  };
+  }
 };
 
 }  // namespace MDD

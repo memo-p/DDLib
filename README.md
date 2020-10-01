@@ -120,6 +120,26 @@ A working example of how to use the relax creation for a relax sum problem is :
 
 An example for the independent set can be found in _benchs/src/RelaxIndependentSet.hpp_
 
+
+#### Relax Operations
+In the same way as the reduction operation can be relaxed, the apply operation can be too.
+
+The current implementation (_src/DynamicProg/ApplyDP.hpp_) uses the dynamic
+programming relax constructor, and can use different _Partitioner_ objects. 
+
+The following example for the intersection could be define:
+```C++
+ int width = 40;
+ int depth = 2;
+ MDD::MDD* mdd1 = bt1.Build();
+ MDD::MDD* mdd2 = bt2.Build();
+ ApplyDP inter(*mdd1, *mdd2, Apply::op_intersection);
+ Partitioner p;
+ DynamicProgRelaxCreation dp_ap(mdd1->getSize(), domain, &inter, &p, width,
+                                 depth);
+ MDD* mdd = dp_ap.Build();
+```
+
 ## 3rd party
 This Library is made to be plugged as a 3rd party library.
 For constraint solver for example.

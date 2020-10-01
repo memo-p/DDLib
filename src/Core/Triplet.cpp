@@ -26,6 +26,6 @@
 
 namespace MDD {
 
-Triplet * Triplet::allocated = NULL;
+thread_local Triplet * Triplet::allocated = NULL;
 
 }  // namespace MDD
