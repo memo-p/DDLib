@@ -153,3 +153,13 @@ rm -rf Debug ; mkdir Debug ; cd Debug ; cmake -GNinja -DALL_MDD=ON -DCMAKE_BUILD
 ```
 rm -rf Release ; mkdir Release ; cd Release ; cmake -GNinja -DALL_MDD=ON -DCMAKE_BUILD_TYPE=Release .. ; ninja
 ```
+
+## Licence
+
+This project is a multi-licence project. The DDLib has an MIT-licence, and each 3rdparty have it's own licence. 
+They are simply provided as is, and any information about their licence is in their directory.
+
+- catch : Boost Software License, Version 1.0
+- InfInt : Mozilla Public License, v. 2.0
+- cxxopt : MIT-licence
+- nlohmann-json : MIT licence
