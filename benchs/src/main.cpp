@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-#include "RelaxIndependentSet.hpp"
+#include "MISP/RelaxIndependentSet.hpp"
 
 int main(int argc, char *argv[]) {
   MDD::RelaxIndependentSet(argc, argv);

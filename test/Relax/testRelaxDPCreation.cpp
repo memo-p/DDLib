@@ -26,8 +26,10 @@
 
 #include <unordered_map>
 
+#include "Constructions/BuilderFromDynProg.hpp"
 #include "DynamicProg/ApplyDP.hpp"
 #include "DynamicProg/DynSum.hpp"
+#include "DynamicProg/MISP/mispbench.hpp"
 #include "Help/testHelper.hpp"
 #include "Operations/Apply.hpp"
 #include "Operations/ReduceDFSMap.hpp"
@@ -38,19 +40,29 @@
 using namespace MDD;
 
 TEST_CASE("test basic relax creation") {
-  State* root = new BasicState<int>(0);
-  int nb_vars = 3;
-  int nb_values = 2;  // 0, 1
-  int max_width = 2;
-  int max_depth = 1;
-  int max_DPSum = 2;
-  SumDynProg sdp(max_DPSum);
-  Partitioner p;
-  DynamicProgRelaxCreation dprc(nb_vars, nb_values, &sdp, &p, max_width,
-                                max_depth);
-  auto mdd = dprc.Build();
-  // DrawStates(*mdd, dprc.States());
-  CHECK(true);
+  for (int depth = 0; depth < 3; depth++) {
+    int nb_vars = 4;
+    int nb_values = 2;  // 0, 1
+    int max_width = 2;
+    int max_depth = depth;
+    int max_DPSum = 2;
+    SumDynProg sdp(max_DPSum);
+    Partitioner p;
+    DynamicProgRelaxCreation dprc(nb_vars, nb_values, &sdp, &p, max_width,
+                                  max_depth);
+    auto mdd = dprc.Build();
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 2; j++) {
+        for (int k = 0; k < 2; k++) {
+          for (int l = 0; l < 2; l++) {
+            if (i + j + k + l <= max_DPSum) {
+              CHECK(mdd->contains({i, j, k, l}));
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 TEST_CASE("test relax apply intersection rdm exact") {
@@ -75,8 +87,9 @@ TEST_CASE("test relax apply intersection rdm exact") {
       MDD::MDD* mdd2 = bt2.Build();
       checkMDD(mdd1);
 
-      MDD::MDD* mdd_inter = RelaxApplyDP(*mdd1, *mdd2, 5, Apply::op_intersection,
-                                        nb_tuples_1 * nb_tuples_2, depth);
+      MDD::MDD* mdd_inter =
+          RelaxApplyDP(*mdd1, *mdd2, 5, Apply::op_intersection,
+                       nb_tuples_1 * nb_tuples_2, depth);
 
       ReduceDFSMap r_dfs(*mdd_inter);
       r_dfs.Run();
@@ -128,8 +141,7 @@ TEST_CASE("test relax apply intersection rdm relax") {
         checkMDD(mdd1);
 
         MDD::MDD* mdd_inter =
-            RelaxApplyDP(*mdd1, *mdd2, 5, Apply::op_intersection,
-                         width, depth);
+            RelaxApplyDP(*mdd1, *mdd2, 5, Apply::op_intersection, width, depth);
 
         ReduceDFSMap r_dfs(*mdd_inter);
         r_dfs.Run();
@@ -146,9 +158,65 @@ TEST_CASE("test relax apply intersection rdm relax") {
         for (auto&& t : table2.Tuples()) {
           if (table1.contains(t)) {
             CHECK(mdd_inter->contains(t));
-          } 
+          }
         }
         CHECK(CountTuples(*mdd_inter) >= nb_tuples_result);
+      }
+    }
+  }
+}
+
+TEST_CASE("test MISP relax creation") {
+  std::vector<int> widths = {2, 4, 7, 10};
+  std::vector<int> seeds = {752190, 500, 198164, 99999};
+
+  for (int seed_id = 0; seed_id < seeds.size(); seed_id++) {
+    for (int depth = 0; depth < 3; depth++) {
+      for (int w_id = 0; w_id < widths.size(); w_id++) {
+        for (int part_algo = 0; part_algo < 3; part_algo++) {
+          int nb_vars = 9;
+          int nb_values = 2;  // 0, 1
+          int max_width = widths[w_id];
+          int max_depth = depth;
+          int seed = seeds[seed_id];
+          MISPBench misp_bench(nb_vars, 0.3, seed);
+          misp_bench.BuildInstance();
+
+          // Exact one
+          MISPDP misp(misp_bench.Neighbors(), misp_bench.Costs());
+          MDDBuilderDynP dpc(&misp, nb_vars, nb_values);
+          auto mdde = dpc.Build();
+          Reduce rd(*mdde);
+          checkMDD(mdde);
+
+          // relax one
+          MISPDP mispRelax(misp_bench.Neighbors(), misp_bench.Costs());
+          Partitioner* partitioner = nullptr;
+          DynamicProgRelaxCreation dprc(nb_vars, nb_values, &mispRelax,
+                                        partitioner, max_width, max_depth);
+          if (part_algo == 0) {
+            partitioner = new Partitioner();
+          } else if (part_algo == 1) {
+            partitioner = new RandomPartitioner();
+          } else if (part_algo == 2) {
+            partitioner = new MaxRankPartitioner(&dprc);
+          }
+          dprc.SetPartitioner(partitioner);
+          auto mdd = dprc.Build();
+
+          // check inclusion.
+          std::vector<int> values;
+          for (size_t i = 0; i < nb_vars; i++) {
+            values.push_back(nb_values);
+          }
+
+          TableOfTuple table(nb_vars, values);
+          FillTable(*mdde, &table);
+          CHECK(table.NumberOfTuples() > 0);
+          for (std::vector<int> const& tuple : table.Tuples()) {
+            CHECK(mdd->contains(tuple));
+          }
+        }
       }
     }
   }

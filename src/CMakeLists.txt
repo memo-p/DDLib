@@ -37,6 +37,7 @@ DynamicProg/ApplyDP.hpp
 DynamicProg/DynP.hpp
 DynamicProg/DynSum.hpp
 DynamicProg/IndepSet.hpp
+DynamicProg/MISP/mispbench.hpp
 Operations/Apply.hpp
 Operations/Reduce.hpp
 Operations/ReduceDFSMap.hpp
