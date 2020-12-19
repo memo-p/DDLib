@@ -75,6 +75,16 @@ TEST_CASE("test relax reduce automaton") {
   RelaxReduce(*mdd, 3, &p);
   // Draw(*mdd);
   checkMDD(mdd);
+
+  TableOfTuple table(4, {4,4,4,4});
+  {
+    MDDBuilderAutomaton bt2(transitions, 4, 0, {0, 1, 2, 3});
+    MDD::MDD* mdd2 = bt2.Build();
+    FillTable(*mdd2,&table);
+  }
+   for(std::vector<int> const &tuple : table.Tuples()) {
+    CHECK(mdd->contains(tuple));
+  }
 }
 
 

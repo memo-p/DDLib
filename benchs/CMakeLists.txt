@@ -2,7 +2,7 @@ PROJECT(Bench)
 
 # All sources that also need to be tested in unit tests go into a static library
 set(APP_HEADERS
-        src/RelaxIndependentSet.hpp
+        src/MISP/RelaxIndependentSet.hpp
 )
 
 set(APP_SOURCES

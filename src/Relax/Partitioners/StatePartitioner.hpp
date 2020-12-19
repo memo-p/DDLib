@@ -55,7 +55,12 @@ class StatePartitioner : public Partitioner {
    **/
   DynamicProgRelaxCreation &DPC() { return *dpc_; }
 
-  State *GetState(Node *n) { return DPC().States().at(n->UID()); }
+  /**
+   * return the state associated to a node.
+   * Warning, if the node is resulting of a previous merge,
+   * no state is associated.
+   **/
+  State *GetState(Node *n) { return DPC().States()[n->UID()]; }
 };
 
 /**
@@ -74,7 +79,11 @@ class MaxRankPartitioner : public StatePartitioner {
     const uint64_t max_width = partition.size();
     assert(max_width > 0);
     auto gt = [this](Node *e1, Node *e2) {
-      return GetState(e1)->Rank() > GetState(e2)->Rank();
+      auto r1 = GetState(e1);
+      auto r2 = GetState(e2);
+      if (!r1) { return false; }
+      if (!r2) { return true; }
+      return r1->Rank() > r2->Rank();
     };
     std::priority_queue<Node *, std::vector<Node *>, decltype(gt)> queue(gt);
     Node *n = layer.First();

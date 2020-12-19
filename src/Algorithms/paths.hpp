@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,6 +29,8 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <functional>
+#include <utility>
 
 #include "Core/MDD.hpp"
 #include "Operations/Search.hpp"
@@ -41,14 +43,18 @@ namespace MDD {
 class LongestPathBFS : public BreadthFirstSearch {
  private:
   std::unordered_map<int, int> longest_past_;
+  std::function<int(Arc *)> value_;
 
  public:
-  LongestPathBFS(MDD &mdd) : BreadthFirstSearch(mdd) {}
+  LongestPathBFS(
+      MDD &mdd,
+      std::function<int(Arc *)> value = [](Arc *a) { return a->Value(); })
+      : BreadthFirstSearch(mdd), value_(value) {}
 
   void OnArc(Arc *a) override {
     longest_past_[a->End()->UID()] =
         std::max(longest_past_[a->End()->UID()],
-                 longest_past_[a->Start()->UID()] + a->Value());
+                 longest_past_[a->Start()->UID()] + value_(a));
   }
   /**
    * Return the Longest Path size.

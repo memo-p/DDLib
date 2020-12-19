@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_DYNAMICPROG_DYNSUM
-#define SRC_DYNAMICPROG_DYNSUM
+#ifndef SRC_DYNAMICPROG_INDEPSET
+#define SRC_DYNAMICPROG_INDEPSET
 
 #include <stdio.h>
 
@@ -69,18 +69,18 @@ class IndepSetState : public State {
  * Dynamic programming Maximum independent set problem.
  *
  **/
-class MISP : public DynamicProgram {
+class MISPDP : public DynamicProgram {
   std::unordered_map<std::string, IndepSetState*> existing_states;
-  const std::vector<BitSet>& neighbors_;
+  std::vector<BitSet> const& neighbors_;
   std::vector<int> costs_;
   IndepSetState buffer_;
 
  public:
-  MISP(std::vector<BitSet>& neighbors, std::vector<int> costs)
+  MISPDP(std::vector<BitSet>const& neighbors, std::vector<int> costs)
       : neighbors_(neighbors), costs_(costs), buffer_(0, neighbors.size()) {}
 
-  MISP(std::vector<BitSet>& neighbors)
-      : MISP(neighbors, std::vector<int>(neighbors.size(), 1)) {}
+  MISPDP(std::vector<BitSet>const& neighbors)
+      : MISPDP(neighbors, std::vector<int>(neighbors.size(), 1)) {}
 
   State* MakeInitialState() override {
     return new IndepSetState(0, neighbors_.size());
@@ -153,4 +153,4 @@ class MISP : public DynamicProgram {
 
 }  // namespace MDD
 
-#endif /* SRC_DYNAMICPROG_DYNSUM */
+#endif /* SRC_DYNAMICPROG_INDEPSET */

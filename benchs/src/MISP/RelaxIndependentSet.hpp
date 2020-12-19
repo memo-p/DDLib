@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -33,6 +33,8 @@
 #include <random>
 #include <unordered_map>
 
+#include <DynamicProg/MISP/mispbench.hpp>
+
 namespace MDD {
 void RelaxIndependentSet(int argc, char* argv[]) {
   cxxopts::Options options("Relax MISP", "run");
@@ -47,16 +49,20 @@ void RelaxIndependentSet(int argc, char* argv[]) {
                         cxxopts::value<double>());
   options.add_options()("s,seed", "seed for random",
                         cxxopts::value<int>()->default_value("0"));
-  options.add_options()("partitioner",
-                        "Algorithm for selecting nodes to merge (last, random, max)",
-                        cxxopts::value<std::string>()->default_value("last"));
+  options.add_options()(
+      "partitioner",
+      "Algorithm for selecting nodes to merge (last, random, max)",
+      cxxopts::value<std::string>()->default_value("last"));
   options.add_options()(
       "m,mdd", "Draw the MDD (dot/graphviz)",
       cxxopts::value<bool>()->default_value("false")->implicit_value("true"));
   options.add_options()(
       "g,graph", "Draw the graph (dot/graphviz)",
       cxxopts::value<bool>()->default_value("false")->implicit_value("true"));
-
+  options.add_options()(
+      "f,output-format",
+      "output format, but defaut plain text. Can be changed to csv.",
+      cxxopts::value<std::string>()->default_value("plain"));
   options.add_options()("h,help", "Print usage");
   auto result = options.parse(argc, argv);
   if (result.count("help") || result.count("width-max") == 0 ||
@@ -72,69 +78,35 @@ void RelaxIndependentSet(int argc, char* argv[]) {
   double density = result["density"].as<double>();
   int seed = result["seed"].as<int>();
   std::string part_algo = result["partitioner"].as<std::string>();
-  int draw_mdd = result["mdd"].as<bool>();
-  int draw_graph = result["graph"].as<bool>();
+  std::string formating = result["output-format"].as<std::string>();
+  // int draw_mdd = result["mdd"].as<bool>();
+  // int draw_graph = result["graph"].as<bool>();
 
-  std::default_random_engine generator(seed);
-  std::uniform_real_distribution<double> distribution(0.0, 1.0);
+  MISPBench misp_bench(nb_nodes, density, seed);
+  misp_bench.BuildInstance();
+  MISPResult res = misp_bench.BuildMDD(width, depth, part_algo);
+  if (formating == "plain") {
+    std::cout << "********* Solving MISP Problem ************" << std::endl;
+    std::cout << "#Nodes    : " << nb_nodes << std::endl;
+    std::cout << "Density   : " << density << std::endl;
+    std::cout << "Max-width : " << width << std::endl;
+    std::cout << "Max-Depth : " << depth << std::endl;
+    std::cout << "Partition : " << part_algo << std::endl;
+    std::cout << "Seed      : " << seed << std::endl;
+    std::cout << "Build(ms) : " << res.time_ << std::endl;
+    std::cout << "sol count : " << res.nb_tuples_ << std::endl;
+    std::cout << "Best sol  : " << res.lg_path_ << std::endl;
 
-  // Build the instance
-  std::vector<BitSet> neighbors;
-  neighbors.reserve(nb_nodes);
-  for (int i = 0; i < nb_nodes; i++) {
-    neighbors.emplace_back(nb_nodes);
-  }
-  for (int i = 0; i < nb_nodes; i++) {
-    for (int j = i + 1; j < nb_nodes; j++) {
-      if (distribution(generator) < density) {
-        neighbors[i].Add(j);
-        neighbors[j].Add(i);
-      }
-    }
-  }
-
-  Partitioner* partitioner = nullptr;
-  if (part_algo == "last") {
-    partitioner = new Partitioner();
-  } else if (part_algo == "random") {
-    partitioner = new RandomPartitioner();
-  } else if (part_algo == "max") {
-  } else {
-    std::cout << "bad partition algorithm : " << part_algo << std::endl;
-    std::cout << options.help() << std::endl;
-    exit(0);
-  }
-
-  std::cout << "********* Solving MISP Problem ************" << std::endl;
-  std::cout << "#Nodes    : " << nb_nodes << std::endl;
-  std::cout << "Density   : " << density << std::endl;
-  std::cout << "Max-width : " << width << std::endl;
-  std::cout << "Maw-Depth : " << depth << std::endl;
-  std::cout << "Partition : " << part_algo << std::endl;
-  std::cout << "Seed      : " << seed << std::endl;
-
-  MISP misp(neighbors);
-  DynamicProgRelaxCreation dprc(nb_nodes, 2, &misp, partitioner, width, depth);
-
-  if (part_algo == "max") {
-    partitioner = new MaxRankPartitioner(&dprc);
-    dprc.SetPartitioner(partitioner);
-  }
-
-  if (draw_graph) {
-    std::cout << "**** GRAPH ****" << std::endl;
-    misp.DrawGraph();
-  }
-
-  std::cout << "** Start Running  **" << std::endl;
-  auto mdd = dprc.Build();
-  std::cout << "** Finish Running **" << std::endl;
-  std::cout << "Build(ms) : " << dprc.elapsed_m_second() << std::endl;
-  std::cout << "sol count : " << CountTuples(*mdd) << std::endl;
-  std::cout << "Best sol  : " << LongestPath(*mdd) << std::endl;
-  if (draw_mdd) {
-    std::cout << "**** MDD ****" << std::endl;
-    Draw(*mdd);
+  } else if (formating == "csv") {
+    std::cout << "" << nb_nodes;
+    std::cout << "," << density;
+    std::cout << "," << width;
+    std::cout << "," << depth;
+    std::cout << "," << part_algo;
+    std::cout << "," << seed;
+    std::cout << "," << res.time_;
+    std::cout << "," << res.nb_tuples_;
+    std::cout << "," << res.lg_path_ << std::endl;
   }
 }
 
