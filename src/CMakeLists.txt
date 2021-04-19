@@ -37,6 +37,7 @@ DynamicProg/ApplyDP.hpp
 DynamicProg/DynP.hpp
 DynamicProg/DynSum.hpp
 DynamicProg/IndepSet.hpp
+DynamicProg/Constraints/AllDifferent.hpp
 DynamicProg/MISP/mispbench.hpp
 Operations/Apply.hpp
 Operations/Reduce.hpp
@@ -56,7 +57,7 @@ Relax/Utils.hpp
 set(LIB_NAME "MDD")
 add_library(${LIB_NAME} STATIC ${SOURCE} ${HEADERS})
 
-target_link_libraries(${LIB_NAME} infInt cxxopts json-nlohmann)
+target_link_libraries(${LIB_NAME} infInt cxxopts json-nlohmann dkm)
 
 target_compile_options(${LIB_NAME} PRIVATE ${CXX_FLAGS_REQUIRED})
 

@@ -228,12 +228,13 @@ int MDD::largestLayerSize() const {
 
 bool MDD::contains(std::vector<int> const &tuple) const {
   Node *n = Root();
-  Arc *a;
-  for (auto &&v : tuple) {
+  Arc *a = nullptr;
+  for (int v : tuple) {
     a = n->get(v);
     if (a == nullptr) {
       return false;
     }
+    assert(a->Value() == v);
     n = a->End();
   }
   return a != nullptr;

@@ -43,17 +43,18 @@ namespace MDD {
  * This is currently not usable since the reduction
  * does not automatically maintains the states.
  **/
+template<class StateCreation>
 class StatePartitioner : public Partitioner {
  private:
-  DynamicProgRelaxCreation *dpc_;
+  StateCreation *dpc_;
 
  public:
-  StatePartitioner(DynamicProgRelaxCreation *dpc) : dpc_(dpc) {}
+  StatePartitioner(StateCreation *dpc) : dpc_(dpc) {}
 
   /**
    * Return the DP currently being build.
    **/
-  DynamicProgRelaxCreation &DPC() { return *dpc_; }
+  StateCreation &DPC() { return *dpc_; }
 
   /**
    * return the state associated to a node.
@@ -66,12 +67,13 @@ class StatePartitioner : public Partitioner {
 /**
  * The @param width -1 largest nodes are kept, and all the other merged.
  **/
-class MaxRankPartitioner : public StatePartitioner {
+template<class StateCreation>
+class MaxRankPartitioner : public StatePartitioner<StateCreation> {
  private:
   std::priority_queue<Node *> nodes_;
 
  public:
-  MaxRankPartitioner(DynamicProgRelaxCreation *dpc) : StatePartitioner(dpc) {}
+  MaxRankPartitioner(StateCreation *dpc) : StatePartitioner<StateCreation>(dpc) {}
 
   void Partition(const DblList<Node> &layer,
                  std::vector<std::set<Node *>> &partition) override {
@@ -79,13 +81,54 @@ class MaxRankPartitioner : public StatePartitioner {
     const uint64_t max_width = partition.size();
     assert(max_width > 0);
     auto gt = [this](Node *e1, Node *e2) {
-      auto r1 = GetState(e1);
-      auto r2 = GetState(e2);
+      auto r1 = StatePartitioner<StateCreation>::GetState(e1);
+      auto r2 = StatePartitioner<StateCreation>::GetState(e2);
       if (!r1) { return false; }
       if (!r2) { return true; }
       return r1->Rank() > r2->Rank();
     };
     std::priority_queue<Node *, std::vector<Node *>, decltype(gt)> queue(gt);
+    Node *n = layer.First();
+    while (n) {
+      queue.push(n);
+      n = n->Next();
+    }
+    uint64_t i = 0;
+    while (!queue.empty()) {
+      n = queue.top();
+      queue.pop();
+      partition[i].insert(n);
+      if (i + 1 < max_width) {
+        i++;
+      }
+    }
+  }
+};
+
+/**
+ * The @param width -1 smallest nodes are kept, and all the other merged.
+ **/
+template<class StateCreation>
+class MinRankPartitioner : public StatePartitioner<StateCreation> {
+ private:
+  std::priority_queue<Node *> nodes_;
+
+ public:
+  MinRankPartitioner(StateCreation *dpc) : StatePartitioner<StateCreation>(dpc) {}
+
+  void Partition(const DblList<Node> &layer,
+                 std::vector<std::set<Node *>> &partition) override {
+    assert(layer.Size() > 1);
+    const uint64_t max_width = partition.size();
+    assert(max_width > 0);
+    auto lt = [this](Node *e1, Node *e2) {
+      auto r1 = StatePartitioner<StateCreation>::GetState(e1);
+      auto r2 = StatePartitioner<StateCreation>::GetState(e2);
+      if (!r1) { return false; }
+      if (!r2) { return true; }
+      return r1->Rank() < r2->Rank();
+    };
+    std::priority_queue<Node *, std::vector<Node *>, decltype(lt)> queue(lt);
     Node *n = layer.First();
     while (n) {
       queue.push(n);

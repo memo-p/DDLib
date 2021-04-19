@@ -17,6 +17,7 @@ set(LIBS_TEST MDD catch)
 
 # The test program
 create_unit_test(testbuilders Builder/testBuilder.cpp "${LIBS_TEST}")
+create_unit_test(testDPbuilders Builder/testDPBuild.cpp "${LIBS_TEST}")
 create_unit_test(testLists DataStructures/testLists.cpp "${LIBS_TEST}")
 create_unit_test(testMDDInfos Utils/testMDDInfos.cpp "${LIBS_TEST}")
 create_unit_test(testNode Core/testNode.cpp "${LIBS_TEST}")
@@ -25,6 +26,7 @@ create_unit_test(testReduce Operations/testReduce.cpp "${LIBS_TEST}")
 create_unit_test(testTable DataStructures/testTable.cpp "${LIBS_TEST}")
 create_unit_test(testRelaxDPC Relax/testRelaxDPCreation.cpp "${LIBS_TEST}")
 create_unit_test(testRelaxReduce Relax/testRelaxReduce.cpp "${LIBS_TEST}")
+create_unit_test(testRestrictedDPC Restricted/testRestrictedDPCreation.cpp "${LIBS_TEST}")
 
 ###BUILD TEST Examples
 set(LIBS_EXAMPLES  ${LIBS_TEST})

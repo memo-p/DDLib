@@ -86,6 +86,14 @@ void BitSet::Not() {
   words_[size_ - 1] &= tail_mask_;
 }
 
+int64_t BitSet::NbActives() {
+  int64_t res = 0;
+  for (size_t i = 0; i < size_; ++i) {
+    res += NbOfBitSets(words_[i]);
+  }
+  return res;
+}
+
 void BitSet::Print(std::ostream &ss) {
   ss << "words = ";
   for (size_t i = 0; i < size_; ++i) {

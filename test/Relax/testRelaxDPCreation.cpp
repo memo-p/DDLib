@@ -28,12 +28,15 @@
 
 #include "Constructions/BuilderFromDynProg.hpp"
 #include "DynamicProg/ApplyDP.hpp"
+#include "DynamicProg/Constraints/AllDifferent.hpp"
 #include "DynamicProg/DynSum.hpp"
 #include "DynamicProg/MISP/mispbench.hpp"
+#include "DynamicProg/SetCover/bench.hpp"
 #include "Help/testHelper.hpp"
 #include "Operations/Apply.hpp"
 #include "Operations/ReduceDFSMap.hpp"
 #include "Relax/Creation/DPRelaxCreation.hpp"
+#include "Relax/Partitioners/setPartitioner.hpp"
 #include "Relax/Utils.hpp"
 #include "catch.hpp"
 
@@ -199,7 +202,7 @@ TEST_CASE("test MISP relax creation") {
           } else if (part_algo == 1) {
             partitioner = new RandomPartitioner();
           } else if (part_algo == 2) {
-            partitioner = new MaxRankPartitioner(&dprc);
+            partitioner = new MaxRankPartitioner<DynamicProgRelaxCreation>(&dprc);
           }
           dprc.SetPartitioner(partitioner);
           auto mdd = dprc.Build();
@@ -215,6 +218,59 @@ TEST_CASE("test MISP relax creation") {
           CHECK(table.NumberOfTuples() > 0);
           for (std::vector<int> const& tuple : table.Tuples()) {
             CHECK(mdd->contains(tuple));
+          }
+        }
+      }
+    }
+  }
+}
+
+TEST_CASE("test Alldiff DP relax creation") {
+  std::vector<int> widths = {2, 4, 7, 10};
+  for (size_t nb_vars = 4; nb_vars < 7; nb_vars++) {
+    for (size_t nb_values = 4; nb_values < 7; nb_values++) {
+      if (nb_values < nb_vars) {
+        continue;
+      }
+      for (int depth = 0; depth < 3; depth++) {
+        for (int w_id = 0; w_id < widths.size(); w_id++) {
+          for (int part_algo = 0; part_algo < 3; part_algo++) {
+            int max_width = widths[w_id];
+            int max_depth = depth;
+            // Exact one
+            AllDifferentDP sdp(nb_values);
+            MDDBuilderDynP dpc(&sdp, nb_vars, nb_values);
+            auto mdde = dpc.Build();
+            Reduce rd(*mdde);
+            checkMDD(mdde);
+
+            // relax one
+            AllDifferentDP sdpR(nb_values);
+            Partitioner* partitioner = nullptr;
+            DynamicProgRelaxCreation dprc(nb_vars, nb_values, &sdpR,
+                                          partitioner, max_width, max_depth);
+            if (part_algo == 0) {
+              partitioner = new Partitioner();
+            } else if (part_algo == 1) {
+              partitioner = new RandomPartitioner();
+            } else if (part_algo == 2) {
+              partitioner = new SmallKMeansPartitioner<DynamicProgRelaxCreation>(&dprc);
+            }
+            dprc.SetPartitioner(partitioner);
+            auto mdd = dprc.Build();
+
+            // check inclusion.
+            std::vector<int> values;
+            for (size_t i = 0; i < nb_vars; i++) {
+              values.push_back(nb_values);
+            }
+
+            TableOfTuple table(nb_vars, values);
+            FillTable(*mdde, &table);
+            CHECK(table.NumberOfTuples() > 0);
+            for (std::vector<int> const& tuple : table.Tuples()) {
+              CHECK(mdd->contains(tuple));
+            }
           }
         }
       }
