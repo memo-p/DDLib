@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -27,9 +27,9 @@
 
 #include <stdio.h>
 
+#include <iterator>
 #include <queue>
 #include <sstream>
-#include <iterator>
 
 #include "Core/MDD.hpp"
 #include "DataStructures/BitSets.hpp"
@@ -94,11 +94,17 @@ class BasicState : public State {
 
   T operator~() { return ~value_; }
 
-  int Rank() override { return value_; }
+  int Rank() override { return static_cast<int>(value_); }
+};
+
+class SmallBitsState : public BasicState<uint64_t> {
+ public:
+  SmallBitsState(uint64_t value) : BasicState<uint64_t>(value) {}
+
+  int Rank() override { return static_cast<int>(NbOfBitSets(Value())); }
 };
 
 typedef BasicState<int> IntState;
-typedef BasicState<uint64_t> SmallBitsState;
 
 /**
  * BitSet implementation of a state.
@@ -117,6 +123,8 @@ class SetState : public State, public BitSet {
     }
     return oss.str();
   }
+
+  int Rank() override { return static_cast<int>(NbActives()); }
 };
 
 }  // namespace MDD

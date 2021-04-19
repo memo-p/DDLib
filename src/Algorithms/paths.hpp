@@ -26,6 +26,7 @@
 #define SRC_ALGORITHMS_PATHS
 
 #include <stdio.h>
+#include <limits>
 
 #include <iostream>
 #include <unordered_map>
@@ -66,6 +67,43 @@ inline int LongestPath(MDD &mdd) {
   LongestPathBFS lp(mdd);
   lp.Run();
   return lp.GetLongestPath();
+}
+
+
+/**
+ * Class that process the shortest path value in the MDD
+ **/
+class ShortestPathBFS : public BreadthFirstSearch {
+ private:
+  std::unordered_map<int, int> shortest_past_;
+  std::function<int(Arc *)> value_;
+
+ public:
+  ShortestPathBFS(
+      MDD &mdd,
+      std::function<int(Arc *)> value = [](Arc *a) { return a->Value(); })
+      : BreadthFirstSearch(mdd), value_(value) {}
+
+  void OnArc(Arc *a) override {
+    int end_id = a->End()->UID();
+    if (shortest_past_.find(end_id) == shortest_past_.end()) {
+      shortest_past_[end_id] = std::numeric_limits<int>::max();
+    }
+    
+    shortest_past_[end_id] =
+        std::min(shortest_past_[end_id],
+                 shortest_past_[a->Start()->UID()] + value_(a));
+  }
+  /**
+   * Return the shortest Path size.
+   **/
+  int GetShortestPath() { return shortest_past_[GetMDD().Final()->UID()]; }
+};
+
+inline int ShortestPath(MDD &mdd) {
+  ShortestPathBFS lp(mdd);
+  lp.Run();
+  return lp.GetShortestPath();
 }
 
 }  // namespace MDD

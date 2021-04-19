@@ -56,3 +56,8 @@ if(TESTS_MDD)
   add_subdirectory(test)
 endif()
 
+if (NOT TARGET dkm)
+  include_directories(SYSTEM "3rdparty/dkm/include")
+  add_subdirectory(3rdparty/dkm)
+endif() 
+

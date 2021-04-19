@@ -196,28 +196,3 @@ TEST_CASE("test MDD Automaton creation") {
   CHECK(!mdd->contains({2, 2, 2, 0}));
   CHECK(!mdd->contains({2, 2, 2, 2}));
 }
-
-TEST_CASE("test basic DP creation") {
-  int nb_vars = 4;
-  int nb_values = 2;  // 0, 1
-  int max_DPSum = 2;
-  SumDynProg sdp(max_DPSum);
-  MDDBuilderDynP dprc(&sdp, nb_vars, nb_values);
-  auto mdd = dprc.Build();
-  Reduce rd(*mdd);
-  checkMDD(mdd);
-  CHECK(LongestPath(*mdd) == 2);
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++) {
-      for (int k = 0; k < 2; k++) {
-        for (int l = 0; l < 2; l++) {
-          if (i+j+k+l <= 2) {
-            CHECK(mdd->contains({i, j, k, l}));
-          } else {
-            CHECK(!mdd->contains({i, j, k, l}));
-          }
-        }
-      }
-    }
-  }
-}

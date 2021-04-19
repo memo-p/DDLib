@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-#ifndef BENCHS_SRC_MISP_MISPBENCH
-#define BENCHS_SRC_MISP_MISPBENCH
+#ifndef SRC_DYNAMICPROG_MISP_MISPBENCH
+#define SRC_DYNAMICPROG_MISP_MISPBENCH
 
 #include "Algorithms/paths.hpp"
 #include "Core/MDD.hpp"
 #include "DynamicProg/IndepSet.hpp"
 #include "Relax/Creation/DPRelaxCreation.hpp"
 #include "Relax/Partitioners/StatePartitioner.hpp"
-#include "random"
-#include "unordered_map"
+#include <random>
+#include <unordered_map>
 
 namespace MDD {
 class MISPBench;
@@ -127,7 +127,7 @@ class MISPBench {
     } else if (part_algo == "random") {
       partitioner = new RandomPartitioner();
     } else if (part_algo == "max") {
-      partitioner = new MaxRankPartitioner(&dprc);
+      partitioner = new MaxRankPartitioner<DynamicProgRelaxCreation>(&dprc);
     } else {
       std::cout << "bad partition algorithm : " << part_algo << std::endl;
       exit(0);
@@ -152,5 +152,54 @@ class MISPBench {
   }
 };
 
+
+/**
+ * Exhaustive search of all the solutions of the problem.
+ **/
+class MISPSolver {
+  std::vector<BitSet> neighbors_;
+  std::vector<int> costs_;
+  std::vector<BitSet> sets_;
+
+ public:
+  MISPSolver(std::vector<BitSet> neighbors, std::vector<int> costs)
+      : neighbors_(neighbors), costs_(costs) {}
+
+  std::vector<std::vector<int>> Solutions() {
+    std::vector<std::vector<int>> sols;
+    sets_.clear();
+    for (size_t i = 0; i < neighbors_.size(); i++) {
+      sets_.emplace_back(neighbors_.size(), false);
+    }
+    std::vector<int> tmp;
+    RecSols(sols, tmp, 0);
+    return sols;
+  }
+
+  private:
+  void RecSols(std::vector<std::vector<int>>& sols, std::vector<int> tmp, uint64_t i) {
+    if (i>=neighbors_.size()) {
+      sols.emplace_back(tmp);
+      return;
+    }
+    if (i == 0 || !sets_[i-1].Contains(i)){
+      sets_[i].Clear();
+      if (i > 0) {
+        sets_[i].Union(sets_[i-1]);
+      }
+      sets_[i].Union(neighbors_[i]);
+      tmp.push_back(1);
+      RecSols(sols, tmp, i+1);
+      tmp.pop_back();
+    }
+    sets_[i].Clear();
+    if (i > 0) {
+      sets_[i].Union(sets_[i-1]);
+    }
+    tmp.push_back(0);
+    RecSols(sols, tmp, i+1);
+  }
+};
+
 }  // namespace MDD
-#endif /* BENCHS_SRC_MISP_MISPBENCH */
+#endif /* SRC_DYNAMICPROG_MISP_MISPBENCH */
