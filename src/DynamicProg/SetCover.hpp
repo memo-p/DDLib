@@ -180,7 +180,7 @@ class SetCoverDP : public DynamicProgram {
     assert(states.size() > 0);
     SetCoverState* ss1 = static_cast<SetCoverState*>(*states.begin());
     buffer_.Set().Union(ss1->Set());
-    int shortest_path = std::numeric_limits<int>::min();
+    int shortest_path = std::numeric_limits<int>::max();
     for (auto&& s : states) {
       SetCoverState* si = static_cast<SetCoverState*>(s);
       buffer_.Set().Union(si->Set());

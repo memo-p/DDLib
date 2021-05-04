@@ -48,10 +48,10 @@ class IndepSetState : public State {
 
  public:
   IndepSetState(int is, uint64_t nb_elements, bool full = false)
-      : is_(is), bs_(nb_elements, full), sp_(0) {}
+      : is_(is), bs_(nb_elements, full), sp_(std::numeric_limits<int>::min()) {}
 
   std::string to_string() override {
-    return is_.to_string() + bs_.to_string();
+    return is_.to_string() + "-" + bs_.to_string();
   };
 
   int Node() { return is_.Value(); }
@@ -76,10 +76,10 @@ class MISPDP : public DynamicProgram {
   IndepSetState buffer_;
 
  public:
-  MISPDP(std::vector<BitSet>const& neighbors, std::vector<int> costs)
+  MISPDP(std::vector<BitSet> const& neighbors, std::vector<int> costs)
       : neighbors_(neighbors), costs_(costs), buffer_(0, neighbors.size()) {}
 
-  MISPDP(std::vector<BitSet>const& neighbors)
+  MISPDP(std::vector<BitSet> const& neighbors)
       : MISPDP(neighbors, std::vector<int>(neighbors.size(), 1)) {}
 
   State* MakeInitialState() override {
@@ -131,6 +131,11 @@ class MISPDP : public DynamicProgram {
         }
       }
     }
+    for (size_t i = 0; i < costs_.size(); i++) {
+      ss << std::to_string(i) << " [label=\"" << std::to_string(i) << "-"
+         << std::to_string(costs_[i]) << "\"]" << std::endl;
+    }
+
     ss << "}" << std::endl;
   }
 

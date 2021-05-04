@@ -24,13 +24,13 @@
 
 #include <iostream>
 
-// #include "MISP/RelaxIndependentSet.hpp"
+#include "MISP/RelaxIndependentSet.hpp"
 // #include "AllDifferent/AllDiffBench.hpp"
-#include "SetCover/runnable.hpp"
+// #include "SetCover/runnable.hpp"
 
 int main(int argc, char *argv[]) {
-  // MDD::RelaxIndependentSet(argc, argv);
+  MDD::RelaxIndependentSet(argc, argv);
   // MDD::AllDiffBench(argc, argv);
-  MDD::RelaxSetCover(argc, argv);
+  // MDD::RelaxSetCover(argc, argv);
   return 0;
 }

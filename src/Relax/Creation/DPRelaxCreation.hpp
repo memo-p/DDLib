@@ -131,6 +131,10 @@ class DynamicProgRelaxCreation : public MDDBuilder {
         if (local_depth >= mdd_->Size()) {
           break;
         } 
+        if (i > 0) {
+          rebuildStates(local_depth, reducer);
+        }
+        
         if (i < DepthRelax()) {
           reducer.ReduceLayer(local_depth);
         } else {

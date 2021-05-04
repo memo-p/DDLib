@@ -192,7 +192,9 @@ class SetCoverBench {
       partitioner = new MaxRankPartitioner<DynamicProgRestrictedCreation>(&dprc);
     } else if (part_algo == "min") {
       partitioner = new MinRankPartitioner<DynamicProgRestrictedCreation>(&dprc);
-    } else {
+    } else if (part_algo == "min-pack") {
+      partitioner = new MinRankPackPartitioner<DynamicProgRestrictedCreation>(&dprc);
+    }else {
       std::cout << "bad partition algorithm : " << part_algo << std::endl;
       exit(0);
     }

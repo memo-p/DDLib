@@ -25,13 +25,15 @@
 #ifndef SRC_DYNAMICPROG_MISP_MISPBENCH
 #define SRC_DYNAMICPROG_MISP_MISPBENCH
 
+#include <memory>
+#include <random>
+#include <unordered_map>
+
 #include "Algorithms/paths.hpp"
 #include "Core/MDD.hpp"
 #include "DynamicProg/IndepSet.hpp"
 #include "Relax/Creation/DPRelaxCreation.hpp"
 #include "Relax/Partitioners/StatePartitioner.hpp"
-#include <random>
-#include <unordered_map>
 
 namespace MDD {
 class MISPBench;
@@ -45,8 +47,10 @@ struct MISPResult {
   int lg_path_;
   int64_t time_;
   MDD* mdd_;
+  MISPDP* misp_dp_;
   MISPResult(MISPBench& misp, int width, int depth, std::string part_algo,
-             InfInt nb_tuples, int lg_path, int64_t time, MDD* mdd)
+             InfInt nb_tuples, int lg_path, int64_t time, MDD* mdd,
+             MISPDP* misp_dp)
       : misp_(misp),
         width_(width),
         depth_(depth),
@@ -54,7 +58,8 @@ struct MISPResult {
         nb_tuples_(nb_tuples),
         lg_path_(lg_path),
         time_(time),
-        mdd_(mdd) {}
+        mdd_(mdd),
+        misp_dp_(misp_dp) {}
 };
 
 class MISPBench {
@@ -65,6 +70,7 @@ class MISPBench {
   int seed_;
   std::default_random_engine generator;
   std::uniform_real_distribution<double> distribution;
+  std::unique_ptr<MISPDP> misp_;
 
  public:
   MISPBench(int nb_nodes, double density, int seed = 500)
@@ -92,7 +98,7 @@ class MISPBench {
   /**
    * Return the encoding of the graph as neighbors sets.
    **/
-  std::vector<BitSet> const& Neighbors() { return neighbors_;}
+  std::vector<BitSet> const& Neighbors() { return neighbors_; }
   /**
    * Return the costs associated to each node.
    **/
@@ -119,8 +125,8 @@ class MISPBench {
     // Partitioner selection
     Partitioner* partitioner = nullptr;
 
-    MISPDP misp(neighbors_, costs_);
-    DynamicProgRelaxCreation dprc(nb_nodes_, 2, &misp, partitioner, width,
+    misp_ = std::unique_ptr<MISPDP>(new MISPDP(neighbors_, costs_));
+    DynamicProgRelaxCreation dprc(nb_nodes_, 2, misp_.get(), partitioner, width,
                                   depth);
     if (part_algo == "last") {
       partitioner = new Partitioner();
@@ -128,6 +134,10 @@ class MISPBench {
       partitioner = new RandomPartitioner();
     } else if (part_algo == "max") {
       partitioner = new MaxRankPartitioner<DynamicProgRelaxCreation>(&dprc);
+    } else if (part_algo == "min") {
+      partitioner = new MinRankPartitioner<DynamicProgRelaxCreation>(&dprc);
+    } else if (part_algo == "min-pack") {
+      partitioner = new MinRankPackPartitioner<DynamicProgRelaxCreation>(&dprc);
     } else {
       std::cout << "bad partition algorithm : " << part_algo << std::endl;
       exit(0);
@@ -148,10 +158,9 @@ class MISPBench {
     int lg_path = lp.GetLongestPath();
 
     return MISPResult(*this, width, depth, part_algo, nb_tuples, lg_path,
-                      dprc.elapsed_m_second(), mdd);
+                      dprc.elapsed_m_second(), mdd, misp_.get());
   }
 };
-
 
 /**
  * Exhaustive search of all the solutions of the problem.
@@ -176,28 +185,29 @@ class MISPSolver {
     return sols;
   }
 
-  private:
-  void RecSols(std::vector<std::vector<int>>& sols, std::vector<int> tmp, uint64_t i) {
-    if (i>=neighbors_.size()) {
+ private:
+  void RecSols(std::vector<std::vector<int>>& sols, std::vector<int> tmp,
+               uint64_t i) {
+    if (i >= neighbors_.size()) {
       sols.emplace_back(tmp);
       return;
     }
-    if (i == 0 || !sets_[i-1].Contains(i)){
+    if (i == 0 || !sets_[i - 1].Contains(i)) {
       sets_[i].Clear();
       if (i > 0) {
-        sets_[i].Union(sets_[i-1]);
+        sets_[i].Union(sets_[i - 1]);
       }
       sets_[i].Union(neighbors_[i]);
       tmp.push_back(1);
-      RecSols(sols, tmp, i+1);
+      RecSols(sols, tmp, i + 1);
       tmp.pop_back();
     }
     sets_[i].Clear();
     if (i > 0) {
-      sets_[i].Union(sets_[i-1]);
+      sets_[i].Union(sets_[i - 1]);
     }
     tmp.push_back(0);
-    RecSols(sols, tmp, i+1);
+    RecSols(sols, tmp, i + 1);
   }
 };
 

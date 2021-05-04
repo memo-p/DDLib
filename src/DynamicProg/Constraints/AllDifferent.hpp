@@ -116,7 +116,7 @@ class AllDifferentDP : public DynamicProgram {
     std::shared_ptr<State> reached_state;
     if (is_small_) {
       std::shared_ptr<SmallBitsState> small_new =
-          std::make_shared<SmallBitsState>(~0ul);
+          std::make_shared<SmallBitsState>(0ul);
       for (State* s : states) {
         SmallBitsState* s_small = static_cast<SmallBitsState*>(s);
         small_new->Set(small_new->Value() | s_small->Value());
@@ -124,7 +124,7 @@ class AllDifferentDP : public DynamicProgram {
       reached_state = small_new;
     } else {
       std::shared_ptr<SetState> ns =
-          std::make_shared<SetState>(nb_values_, true);
+          std::make_shared<SetState>(nb_values_, false);
       for (State* s : states) {
         SetState* s_small = static_cast<SetState*>(s);
         ns->Union(*s_small);

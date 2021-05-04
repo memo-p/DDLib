@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef BENCHS_SRC_ALLDIFFERENT_RELAXINDEPENDENTSET
-#define BENCHS_SRC_ALLDIFFERENT_RELAXINDEPENDENTSET
+#ifndef BENCHS_SRC_ALLDIFFERENT_ALLDIFFBENCH
+#define BENCHS_SRC_ALLDIFFERENT_ALLDIFFBENCH
 #include <Core/MDD.hpp>
 #include <Relax/Creation/DPRelaxCreation.hpp>
 #include <Relax/Partitioners/StatePartitioner.hpp>
@@ -49,6 +49,9 @@ void AllDiffBench(int argc, char* argv[]) {
   options.add_options()("partitioner",
                         "Algorithm for selecting nodes to merge (last, random)",
                         cxxopts::value<std::string>()->default_value("last"));
+  options.add_options()(
+      "m,mdd", "Draw the MDD (dot/graphviz)",
+      cxxopts::value<bool>()->default_value("false")->implicit_value("true"));
   options.add_options()(
       "f,output-format",
       "output format, but defaut plain text. Can be changed to csv.",
@@ -80,9 +83,13 @@ void AllDiffBench(int argc, char* argv[]) {
   } else if (part_algo == "random") {
     partitioner = new RandomPartitioner();
   } else if (part_algo == "max") {
-    partitioner = new MaxRankPartitioner(&dprc);
+    partitioner = new MaxRankPartitioner<DynamicProgRelaxCreation>(&dprc);
+  } else if (part_algo == "min") {
+    partitioner = new MinRankPartitioner<DynamicProgRelaxCreation>(&dprc);
+  } else if (part_algo == "min-pack") {
+    partitioner = new MinRankPackPartitioner<DynamicProgRelaxCreation>(&dprc);
   } else if (part_algo == "kmeans") {
-    partitioner = new SmallKMeansPartitioner(&dprc);
+    partitioner = new SmallKMeansPartitioner<DynamicProgRelaxCreation>(&dprc);
   } else {
     std::cout << "bad partition algorithm : " << part_algo << std::endl;
     exit(0);
@@ -93,9 +100,13 @@ void AllDiffBench(int argc, char* argv[]) {
   int64_t time = dprc.elapsed_m_second();
   // extract number of tuples
   InfInt nb_tuples = CountTuples(*mdd);
-
+  bool draw_mdd = result["mdd"].as<bool>();
+  
+  if (draw_mdd) {
+    Draw(*mdd);
+  }
   if (formating == "plain") {
-    std::cout << "********* Solving MISP Problem ************" << std::endl;
+    std::cout << "********* Solving AllDiff Problem ************" << std::endl;
     std::cout << "#Vars    : " << nb_vars << std::endl;
     std::cout << "#Vals    : " << nb_values << std::endl;
     std::cout << "Max-width : " << width << std::endl;
@@ -113,8 +124,9 @@ void AllDiffBench(int argc, char* argv[]) {
     std::cout << "," << time;
     std::cout << "," << nb_tuples << std::endl;
   }
+  
 }
 
 }  // namespace MDD
 
-#endif /* BENCHS_SRC_ALLDIFFERENT_RELAXINDEPENDENTSET */
+#endif /* BENCHS_SRC_ALLDIFFERENT_ALLDIFFBENCH */

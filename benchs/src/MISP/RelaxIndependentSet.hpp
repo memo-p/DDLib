@@ -79,8 +79,8 @@ void RelaxIndependentSet(int argc, char* argv[]) {
   int seed = result["seed"].as<int>();
   std::string part_algo = result["partitioner"].as<std::string>();
   std::string formating = result["output-format"].as<std::string>();
-  // int draw_mdd = result["mdd"].as<bool>();
-  // int draw_graph = result["graph"].as<bool>();
+  int draw_mdd = result["mdd"].as<bool>();
+  int draw_graph = result["graph"].as<bool>();
 
   MISPBench misp_bench(nb_nodes, density, seed);
   misp_bench.BuildInstance();
@@ -108,6 +108,15 @@ void RelaxIndependentSet(int argc, char* argv[]) {
     std::cout << "," << res.nb_tuples_;
     std::cout << "," << res.lg_path_ << std::endl;
   }
+
+  if (draw_mdd) {
+    Draw(*res.mdd_);
+  }
+  if (draw_graph) {
+    std::cout << "**** GRAPH ****" << std::endl;
+    res.misp_dp_->DrawGraph();
+  }
+  
 }
 
 }  // namespace MDD
