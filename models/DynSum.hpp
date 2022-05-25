@@ -26,18 +26,17 @@
 #define SRC_DYNAMICPROG_DYNSUM
 
 #include <stdio.h>
-
 #include <set>
 #include <unordered_map>
 
-#include "Core/MDD.hpp"
-#include "DynamicProg/DynP.hpp"
-#include "Relax/State.hpp"
+#include <Core/MDD.hpp>
+#include <DynamicProg/DynP.hpp>
+#include <Relax/State.hpp>
 
 namespace MDD {
 
 /**
- * Dynamic programming sum
+ * Dynamic programming sum.
  *
  **/
 class SumDynProg : public DynamicProgram {

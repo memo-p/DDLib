@@ -163,3 +163,4 @@ They are simply provided as is, and any information about their licence is in th
 - InfInt : Mozilla Public License, v. 2.0
 - cxxopt : MIT-licence
 - nlohmann-json : MIT licence
+- dkm : MIT licence

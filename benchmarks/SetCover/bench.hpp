@@ -29,11 +29,11 @@
 #include <random>
 #include <unordered_map>
 
-#include "Algorithms/paths.hpp"
-#include "Core/MDD.hpp"
-#include "DynamicProg/SetCover.hpp"
-#include "Restricted/DPCreation.hpp"
-#include "Relax/Partitioners/StatePartitioner.hpp"
+#include <Algorithms/paths.hpp>
+#include <Core/MDD.hpp>
+#include <SetCover.hpp>
+#include <Restricted/DPCreation.hpp>
+#include <Relax/Partitioners/StatePartitioner.hpp>
 
 namespace MDD {
 class SetCoverBench;

@@ -29,11 +29,11 @@
 #include <random>
 #include <unordered_map>
 
-#include "Algorithms/paths.hpp"
-#include "Core/MDD.hpp"
-#include "DynamicProg/IndepSet.hpp"
-#include "Relax/Creation/DPRelaxCreation.hpp"
-#include "Relax/Partitioners/StatePartitioner.hpp"
+#include <Algorithms/paths.hpp>
+#include <Core/MDD.hpp>
+#include <IndepSet.hpp>
+#include <Relax/Creation/DPRelaxCreation.hpp>
+#include <Relax/Partitioners/StatePartitioner.hpp>
 
 namespace MDD {
 class MISPBench;

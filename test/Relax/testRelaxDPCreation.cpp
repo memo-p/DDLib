@@ -25,13 +25,13 @@
 #define CATCH_CONFIG_MAIN
 
 #include <unordered_map>
+#include <AllDifferent.hpp>
+#include <DynSum.hpp>
+#include <SetCover/bench.hpp>
+#include <MISP/bench.hpp>
 
 #include "Constructions/BuilderFromDynProg.hpp"
 #include "DynamicProg/ApplyDP.hpp"
-#include "DynamicProg/Constraints/AllDifferent.hpp"
-#include "DynamicProg/DynSum.hpp"
-#include "DynamicProg/MISP/mispbench.hpp"
-#include "DynamicProg/SetCover/bench.hpp"
 #include "Help/testHelper.hpp"
 #include "Operations/Apply.hpp"
 #include "Operations/ReduceDFSMap.hpp"

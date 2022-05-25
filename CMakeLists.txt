@@ -16,11 +16,11 @@ endif()
 
 #####CMAKE OPTIONS
 option(ALL_MDD "ALL_MDD" OFF)
-option(BENCHMARKS_MDD "BENCHMARKS_MDD" OFF)
+option(APPS_DD "APPS_MDD" OFF)
 option(TESTS_MDD "TESTS_MDD" OFF)
 
 if(ALL_MDD)
-  set(BENCHMARKS_MDD ON)
+  set(APPS_DD ON)
   set(TESTS_MDD ON)
 endif()
 
@@ -41,11 +41,17 @@ endif()
 if (NOT TARGET json-nlohmann)
   add_subdirectory(3rdparty/nlohmann-json-3.7.3)
 endif() 
+if (NOT TARGET dkm)
+  include_directories(SYSTEM "3rdparty/dkm/include")
+  add_subdirectory(3rdparty/dkm)
+endif() 
 
-add_subdirectory(src)
+add_subdirectory(MDD)
+add_subdirectory(models)
+add_subdirectory(benchmarks)
 
-if(BENCHMARKS_MDD)
-  add_subdirectory(benchs)
+if(APPS_DD)
+  add_subdirectory(apps)
 endif()
 
 if(TESTS_MDD)

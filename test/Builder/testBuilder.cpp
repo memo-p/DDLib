@@ -23,6 +23,7 @@
  */
 
 #define CATCH_CONFIG_MAIN
+#include <DynSum.hpp>
 
 #include "Algorithms/paths.hpp"
 #include "Constructions/BuilderFromAutomaton.hpp"
@@ -32,7 +33,6 @@
 #include "Constructions/MDDBuilderGrid.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "DataStructures/TableSort.hpp"
-#include "DynamicProg/DynSum.hpp"
 #include "Help/testHelper.hpp"
 #include "catch.hpp"
 

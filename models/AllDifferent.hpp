@@ -26,19 +26,18 @@
 #define SRC_DYNAMICPROG_CONSTRAINTS_ALLDIFFERENT
 
 #include <stdio.h>
-
 #include <memory>
 #include <set>
 #include <unordered_map>
 
-#include "Core/MDD.hpp"
-#include "DynamicProg/DynP.hpp"
-#include "Relax/State.hpp"
+#include <Core/MDD.hpp>
+#include <DynamicProg/DynP.hpp>
+#include <Relax/State.hpp>
 
 namespace MDD {
 
 /**
- * Dynamic proggraming encoding of the alldifferent.
+ * Dynamic programing encoding of the alldifferent constraint.
  *
  **/
 class AllDifferentDP : public DynamicProgram {
@@ -56,7 +55,7 @@ class AllDifferentDP : public DynamicProgram {
   bool is_small_;
 
   /**
-   *
+   * buffer of the existing states.
    **/
   std::unordered_map<std::string, std::shared_ptr<State>> existing_states_;
 
@@ -74,12 +73,12 @@ class AllDifferentDP : public DynamicProgram {
   /**
    * Return a state representing the initial state of the DP.
    **/
-  virtual State* MakeInitialState() { return initial_state_.get(); }
+  State* MakeInitialState() override { return initial_state_.get(); }
 
   /**
    * State reached by the transition.
    **/
-  virtual State* TransitionFunction(State* s, int value) {
+  State* TransitionFunction(State* s, int value) override {
     std::shared_ptr<State> reached_state;
     if (is_small_) {
       SmallBitsState* s_small = static_cast<SmallBitsState*>(s);
@@ -112,7 +111,7 @@ class AllDifferentDP : public DynamicProgram {
   /**
    * Method for the merging of states.
    **/
-  virtual State* Merge(std::set<State*> states) {
+  State* Merge(std::set<State*> states) override{
     std::shared_ptr<State> reached_state;
     if (is_small_) {
       std::shared_ptr<SmallBitsState> small_new =

@@ -32,9 +32,9 @@
 #include <random>
 #include <set>
 #include <vector>
+#include <dkm.hpp>
 
 #include "Relax/Partitioners/StatePartitioner.hpp"
-#include "dkm.hpp"
 
 namespace MDD {
 

@@ -25,14 +25,15 @@
 #define CATCH_CONFIG_MAIN
 #include <set>
 
+#include <AllDifferent.hpp>
+#include <DynSum.hpp>
+#include <MISP/bench.hpp>
+#include <SetCover/bench.hpp>
+
 #include "Algorithms/paths.hpp"
 #include "Constructions/BuilderFromDynProg.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "DataStructures/TableSort.hpp"
-#include "DynamicProg/Constraints/AllDifferent.hpp"
-#include "DynamicProg/DynSum.hpp"
-#include "DynamicProg/MISP/mispbench.hpp"
-#include "DynamicProg/SetCover/bench.hpp"
 #include "Help/testHelper.hpp"
 #include "catch.hpp"
 
