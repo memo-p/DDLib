@@ -22,52 +22,41 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_CONSTRUCTIONS_BUILDERFROMAUTOMATON
-#define SRC_CONSTRUCTIONS_BUILDERFROMAUTOMATON
-
-#include <stdio.h>
-
-#include "Constructions/MDDBuilder.hpp"
-#include "Constructions/MDDBuilderGrid.hpp"
-#include "Core/MDD.hpp"
-#include "Operations/Reduce.hpp"
-
+#include <algorithm> // for count
+#include "Builders/Automaton.hpp"
 namespace MDD {
 
-/**
- * Class used to build an MDD from an automaton.
- * * Transition are of defined as follow:
- * - t[0] = starting Node
- * - t[1] = value
- * - t[2] = ending Node
- * 
- * Note that all the states must be positive or null integers.
- **/
-class MDDBuilderAutomaton : public MDDBuilder {
- public:
-  MDDBuilderAutomaton(std::vector<std::vector<int>> const &transitions,
-                      int nb_vars, int start, std::vector<int> finals)
-      : transitions_(transitions),
-        nb_vars_(nb_vars),
-        start_(start),
-        finals_(finals) {}
+const int AutomatonMDDBuilder::start_id = 0;
+const int AutomatonMDDBuilder::value_id = 1;
+const int AutomatonMDDBuilder::end_id = 2;
 
-  MDD *Build();
+MDD *AutomatonMDDBuilder::Build() {
+  ExtractNumberOfStates();
+  GridMDDBuilder bt(nb_vars_, nb_states_);
+  for (auto &&t : transitions_) {
+    if (t[start_id] == start_) {
+      bt.addStartingTransition(t[value_id], t[end_id]);
+    }
+    bt.addTransition(t[start_id], t[value_id], t[end_id]);
+    if (std::count(finals_.begin(), finals_.end(), t[end_id]))
+    {
+      bt.addEndingTransition(t[start_id], t[value_id]);
+    }
+  }
+  return bt.Build();
+}
 
- private:
-  void ExtractNumberOfStates();
-
-  const std::vector<std::vector<int>> &transitions_;
-  const int nb_vars_;
-  int start_;
-  std::vector<int> finals_;
-  int nb_states_;
-  
-  static const int start_id;
-  static const int value_id;
-  static const int end_id;
-};
+void AutomatonMDDBuilder::ExtractNumberOfStates() {
+  nb_states_ = 0;
+  for (auto &&t : transitions_) {
+    if (t[start_id] > nb_states_) {
+      nb_states_ = t[start_id];
+    }
+    if (t[end_id] > nb_states_) {
+      nb_states_ = t[end_id];
+    }
+  }
+  nb_states_++;
+}
 
 }  // namespace MDD
-
-#endif /* SRC_CONSTRUCTIONS_BUILDERFROMAUTOMATON */

@@ -1,11 +1,11 @@
 project(MDD)
 
 set(SOURCE
-Constructions/BuilderFromAutomaton.cpp
-Constructions/BuilderFromDynProg.cpp
-Constructions/BuilderTransitions.cpp
-Constructions/MDDBuilderFromTable.cpp
-Constructions/MDDBuilderGrid.cpp
+Builders/Automaton.cpp
+Builders/DynProg.cpp
+Builders/Transitions.cpp
+Builders/Table.cpp
+Builders/Grid.cpp
 Core/MDD.cpp
 Core/Triplet.cpp
 DataStructures/BitSets.cpp
@@ -18,12 +18,12 @@ Utils/MDDInfos.cpp
 )
 set(HEADERS
 mdds.hpp
-Constructions/MDDBuilder.hpp
-Constructions/BuilderFromAutomaton.hpp
-Constructions/BuilderFromDynProg.hpp
-Constructions/BuilderTransitions.hpp
-Constructions/MDDBuilderFromTable.hpp
-Constructions/MDDBuilderGrid.hpp
+Builders/base.hpp
+Builders/Automaton.hpp
+Builders/DynProg.hpp
+Builders/Transitions.hpp
+Builders/Table.hpp
+Builders/Grid.hpp
 Core/MDD.hpp
 Core/Triplet.hpp
 DataStructures/BitSets.hpp

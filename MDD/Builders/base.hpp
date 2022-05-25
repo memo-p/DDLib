@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_CONSTRUCTIONS_MDDBUILDER
-#define SRC_CONSTRUCTIONS_MDDBUILDER
+#ifndef MDD_BUILDERS_BASE
+#define MDD_BUILDERS_BASE
 
 #include <stdio.h>
 #include "Core/MDD.hpp"
@@ -37,11 +37,11 @@ public:
     
 };
 
-class MDDBuilderEmpty: public MDDBuilder {
+class EmptyBuilder: public MDDBuilder {
     int vars_;
     int domSize_;
 public:
-    MDDBuilderEmpty(int vars, int domSize):
+    EmptyBuilder(int vars, int domSize):
         vars_(vars),
         domSize_(domSize)
         {}
@@ -58,4 +58,4 @@ public:
 
 }  // namespace MDD
 
-#endif /* SRC_CONSTRUCTIONS_MDDBUILDER */
+#endif /* MDD_BUILDERS_BASE */

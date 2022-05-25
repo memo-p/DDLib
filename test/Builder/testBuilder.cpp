@@ -26,11 +26,11 @@
 #include <DynSum.hpp>
 
 #include "Algorithms/paths.hpp"
-#include "Constructions/BuilderFromAutomaton.hpp"
-#include "Constructions/BuilderFromDynProg.hpp"
-#include "Constructions/BuilderTransitions.hpp"
-#include "Constructions/MDDBuilderFromTable.hpp"
-#include "Constructions/MDDBuilderGrid.hpp"
+#include "Builders/Automaton.hpp"
+#include "Builders/DynProg.hpp"
+#include "Builders/Transitions.hpp"
+#include "Builders/Table.hpp"
+#include "Builders/Grid.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "DataStructures/TableSort.hpp"
 #include "Help/testHelper.hpp"
@@ -44,7 +44,7 @@ TEST_CASE("test MDD table creation") {
       {1, 1, 1}, {0, 0, 1}, {0, 1, 0}, {0, 0, 0}};
   table.addTuples(tuples);
 
-  MDDBuilderFromTable bt(table);
+  TableMDDBuilder bt(table);
   MDD::MDD* mdd = bt.Build();
   checkMDD(mdd);
   CHECK(mdd->getSize() == 3);
@@ -63,7 +63,7 @@ TEST_CASE("test MDD tablerandom creation") {
     TableOfTuple* tableptr = MakeRandomTable(5, {4, 4, 3, 2, 5}, 50, seed);
     TableOfTuple& table = *tableptr;
 
-    MDDBuilderFromTable bt(table);
+    TableMDDBuilder bt(table);
     MDD::MDD* mdd = bt.Build();
     checkMDD(mdd);
     CHECK(mdd->getSize() == 5);
@@ -78,7 +78,7 @@ TEST_CASE("test MDD transition creation") {
                                           {1, 1, 3}, {2, 2, 3}, {2, 1, 4},
                                           {3, 0, 5}, {3, 1, 5}, {4, 0, 5}};
 
-  MDDBuilderFromTransition bt(tuples, 3);
+  TransitionMDDBuilder bt(tuples, 3);
   MDD::MDD* mdd = bt.Build();
   checkMDD(mdd);
   CHECK(mdd->getSize() == 3);
@@ -96,7 +96,7 @@ TEST_CASE("test MDD transition creation") {
 }
 
 TEST_CASE("test MDD Grid creation") {
-  MDDBuilderGrid bt(4, 3);
+  GridMDDBuilder bt(4, 3);
   // example sum all paths < 3
   bt.addStartingTransition(0, 0);
   bt.addStartingTransition(1, 1);
@@ -158,7 +158,7 @@ TEST_CASE("test MDD Automaton creation") {
   std::vector<std::vector<int>> transitions = {{0, 0, 0}, {0, 1, 1}, {0, 2, 2},
                                                {1, 0, 1}, {1, 1, 2}, {2, 0, 2}};
 
-  MDDBuilderAutomaton bt(transitions, 4, 0, {0, 1, 2});
+  AutomatonMDDBuilder bt(transitions, 4, 0, {0, 1, 2});
   MDD::MDD* mdd = bt.Build();
   checkMDD(mdd);
   CHECK(mdd->getSize() == 4);

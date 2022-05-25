@@ -31,7 +31,7 @@
 #include <SetCover/bench.hpp>
 
 #include "Algorithms/paths.hpp"
-#include "Constructions/BuilderFromDynProg.hpp"
+#include "Builders/DynProg.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "DataStructures/TableSort.hpp"
 #include "Help/testHelper.hpp"
@@ -44,7 +44,7 @@ TEST_CASE("test basic DP creation") {
   int nb_values = 2;  // 0, 1
   int max_DPSum = 2;
   SumDynProg sdp(max_DPSum);
-  MDDBuilderDynP dprc(&sdp, nb_vars, nb_values);
+  DynProgMDDBuilder dprc(&sdp, nb_vars, nb_values);
   auto mdd = dprc.Build();
   Reduce rd(*mdd);
   checkMDD(mdd);
@@ -71,7 +71,7 @@ TEST_CASE("test Alldiff DP creation") {
         continue;
       }
       AllDifferentDP sdp(nb_values);
-      MDDBuilderDynP dprc(&sdp, nb_vars, nb_values);
+      DynProgMDDBuilder dprc(&sdp, nb_vars, nb_values);
       auto mdd = dprc.Build();
       Reduce rd(*mdd);
       checkMDD(mdd);
@@ -104,7 +104,7 @@ TEST_CASE("test MISP creation") {
 
         // Exact one
         MISPDP misp(misp_bench.Neighbors(), misp_bench.Costs());
-        MDDBuilderDynP dpc(&misp, nb_vars, nb_values);
+        DynProgMDDBuilder dpc(&misp, nb_vars, nb_values);
         auto mdde = dpc.Build();
         Reduce rd(*mdde);
         checkMDD(mdde);
@@ -166,7 +166,7 @@ TEST_CASE("test SetCover creation") {
 
             // Exact one
             SetCoverDP sc(sc_bench.RowsMembership(), sc_bench.Costs());
-            MDDBuilderDynP dpc(&sc, nb_vars, nb_values);
+            DynProgMDDBuilder dpc(&sc, nb_vars, nb_values);
             auto mdde = dpc.Build();
             Reduce rd(*mdde);
             checkMDD(mdde);

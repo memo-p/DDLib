@@ -23,8 +23,7 @@
  */
 #define CATCH_CONFIG_MAIN
 
-#include "Constructions/BuilderFromDynProg.hpp"
-#include "Constructions/MDDBuilderFromTable.hpp"
+#include "Builders/DynProg.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "DynamicProg/ApplyDP.hpp"
 #include "Help/testHelper.hpp"
@@ -43,14 +42,14 @@ TEST_CASE("test MDD intersection rdm") {
       TableOfTuple* tableptr1 =
           MakeRandomTable(nb_vars, domains, nb_tuples_1, seed);
       TableOfTuple& table1 = *tableptr1;
-      MDDBuilderFromTable bt1(table1);
+      TableMDDBuilder bt1(table1);
       MDD::MDD* mdd1 = bt1.Build();
       checkMDD(mdd1);
 
       TableOfTuple* tableptr2 =
           MakeRandomTable(nb_vars, domains, nb_tuples_2, seed);
       TableOfTuple& table2 = *tableptr2;
-      MDDBuilderFromTable bt2(table2);
+      TableMDDBuilder bt2(table2);
       MDD::MDD* mdd2 = bt2.Build();
       checkMDD(mdd1);
 
@@ -62,7 +61,7 @@ TEST_CASE("test MDD intersection rdm") {
 
       if (method == 1) {
         ApplyDP adp(*mdd1, *mdd2, Apply::op_intersection);
-        MDDBuilderDynP dprc(
+        DynProgMDDBuilder dprc(
             &adp, nb_vars,
             *std::max_element(domains.begin(), domains.end()) + 1);
         mdd_inter = dprc.Build();
@@ -101,14 +100,14 @@ TEST_CASE("test MDD union rdm") {
       TableOfTuple* tableptr1 =
           MakeRandomTable(nb_vars, domains, nb_tuples_1, seed);
       TableOfTuple& table1 = *tableptr1;
-      MDDBuilderFromTable bt1(table1);
+      TableMDDBuilder bt1(table1);
       MDD::MDD* mdd1 = bt1.Build();
       checkMDD(mdd1);
 
       TableOfTuple* tableptr2 =
           MakeRandomTable(nb_vars, domains, nb_tuples_2, seed);
       TableOfTuple& table2 = *tableptr2;
-      MDDBuilderFromTable bt2(table2);
+      TableMDDBuilder bt2(table2);
       MDD::MDD* mdd2 = bt2.Build();
       checkMDD(mdd1);
 
@@ -121,7 +120,7 @@ TEST_CASE("test MDD union rdm") {
 
       if (method == 1) {
         ApplyDP adp(*mdd1, *mdd2, Apply::op_union);
-        MDDBuilderDynP dprc(
+        DynProgMDDBuilder dprc(
             &adp, nb_vars,
             *std::max_element(domains.begin(), domains.end()) + 1);
         mdd_inter = dprc.Build();

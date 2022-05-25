@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_CONSTRUCTIONS_BUILDERFROMDYNPROG
-#define SRC_CONSTRUCTIONS_BUILDERFROMDYNPROG
+#ifndef MDD_BUILDERS_DYNPROG
+#define MDD_BUILDERS_DYNPROG
 
 #include <stdio.h>
 
-#include "Constructions/MDDBuilder.hpp"
-#include "Constructions/MDDBuilderGrid.hpp"
+#include "Builders/base.hpp"
+#include "Builders/Grid.hpp"
 #include "Core/MDD.hpp"
 #include "DynamicProg/DynP.hpp"
 #include "Operations/Reduce.hpp"
@@ -38,9 +38,9 @@ namespace MDD {
 /**
  * Class used to build an MDD from a dynamic program
  **/
-class MDDBuilderDynP : public MDDBuilder {
+class DynProgMDDBuilder : public MDDBuilder {
  public:
-  MDDBuilderDynP(DynamicProgram *dp, int nb_vars, int domain_size)
+  DynProgMDDBuilder(DynamicProgram *dp, int nb_vars, int domain_size)
       : dp_(dp),
         nb_vars_(nb_vars),
         domain_size_(domain_size),
@@ -88,4 +88,4 @@ class MDDBuilderDynP : public MDDBuilder {
 
 }  // namespace MDD
 
-#endif /* SRC_CONSTRUCTIONS_BUILDERFROMDYNPROG */
+#endif /* MDD_BUILDERS_DYNPROG */

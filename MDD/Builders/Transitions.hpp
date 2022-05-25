@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,44 +22,49 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_CONSTRUCTIONS_MDDBUILDERFROMTABLE
-#define SRC_CONSTRUCTIONS_MDDBUILDERFROMTABLE
+#ifndef MDD_BUILDERS_TRANSITIONS
+#define MDD_BUILDERS_TRANSITIONS
 
 #include <stdio.h>
+#include <unordered_map>
+#include <cassert>
 
-#include "Constructions/MDDBuilder.hpp"
+#include "Builders/base.hpp"
 #include "Core/MDD.hpp"
-#include "DataStructures/Table.hpp"
-#include "DataStructures/TableSort.hpp"
 #include "Operations/Reduce.hpp"
 
 namespace MDD {
 
-class MDDBuilderFromTable : public MDDBuilder {
+/**
+ * Builder of MDD using as input the MDD as a transition graph.
+ * Transition are of defined as follow:
+ * - t[0] = starting Node
+ * - t[1] = value
+ * - t[2] = ending Node
+ * 
+ * Warning: Root node must be labeled 0. 
+ * Transitions must be given in the order of a search in the MDD.
+ * This implies that before using a node i, at least 1 transition leading to 
+ * i must exists.
+ * Only transition from level i to level i+1 are allowed.
+ **/
+class TransitionMDDBuilder : public MDDBuilder {
  public:
-  // the table must be sorted
-  MDDBuilderFromTable(TableOfTuple &table, int *order);
-
-  MDDBuilderFromTable(TableOfTuple &table)
-      : MDDBuilderFromTable(table, CountSort(table)) {
-    order_local_ = true;
-  }
-
-  ~MDDBuilderFromTable() {
-    if (order_local_) {
-      delete[] order_;
-    }
-    
-  }
+  TransitionMDDBuilder(std::vector<std::vector<int>> const &transitions,
+                           int nb_vars)
+      : transitions_(transitions), nb_vars_(nb_vars) {}
 
   MDD *Build();
 
  private:
-  TableOfTuple &table_;
-  int *order_;
-  bool order_local_;
+
+  const std::vector<std::vector<int>> &transitions_;
+  const int nb_vars_;
+  static const int start_id;
+  static const int value_id;
+  static const int end_id;
 };
 
 }  // namespace MDD
 
-#endif /* SRC_CONSTRUCTIONS_MDDBUILDERFROMTABLE */
+#endif /* MDD_BUILDERS_TRANSITIONS */

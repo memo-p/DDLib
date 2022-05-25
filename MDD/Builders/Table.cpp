@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-#include "MDDBuilderFromTable.hpp"
+#include "Table.hpp"
 namespace MDD {
 
-MDDBuilderFromTable::MDDBuilderFromTable(TableOfTuple& table, int* order)
+TableMDDBuilder::TableMDDBuilder(TableOfTuple& table, int* order)
     : table_(table), order_(order),order_local_(false) {}
 
-MDD* MDDBuilderFromTable::Build() {
+MDD* TableMDDBuilder::Build() {
   MDD* mdd = new MDD(table_.NumberOfVar());
   mdd->setDomSize(table_.domSize_);
   mdd->BuildRootAndFinalNodes();

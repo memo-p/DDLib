@@ -30,7 +30,7 @@
 #include <SetCover/bench.hpp>
 #include <MISP/bench.hpp>
 
-#include "Constructions/BuilderFromDynProg.hpp"
+#include "Builders/DynProg.hpp"
 #include "DynamicProg/ApplyDP.hpp"
 #include "Help/testHelper.hpp"
 #include "Operations/Apply.hpp"
@@ -79,14 +79,14 @@ TEST_CASE("test relax apply intersection rdm exact") {
       TableOfTuple* tableptr1 =
           MakeRandomTable(nb_vars, domains, nb_tuples_1, seed);
       TableOfTuple& table1 = *tableptr1;
-      MDDBuilderFromTable bt1(table1);
+      TableMDDBuilder bt1(table1);
       MDD::MDD* mdd1 = bt1.Build();
       checkMDD(mdd1);
 
       TableOfTuple* tableptr2 =
           MakeRandomTable(nb_vars, domains, nb_tuples_2, seed);
       TableOfTuple& table2 = *tableptr2;
-      MDDBuilderFromTable bt2(table2);
+      TableMDDBuilder bt2(table2);
       MDD::MDD* mdd2 = bt2.Build();
       checkMDD(mdd1);
 
@@ -132,14 +132,14 @@ TEST_CASE("test relax apply intersection rdm relax") {
         TableOfTuple* tableptr1 =
             MakeRandomTable(nb_vars, domains, nb_tuples_1, seed);
         TableOfTuple& table1 = *tableptr1;
-        MDDBuilderFromTable bt1(table1);
+        TableMDDBuilder bt1(table1);
         MDD::MDD* mdd1 = bt1.Build();
         checkMDD(mdd1);
 
         TableOfTuple* tableptr2 =
             MakeRandomTable(nb_vars, domains, nb_tuples_2, seed);
         TableOfTuple& table2 = *tableptr2;
-        MDDBuilderFromTable bt2(table2);
+        TableMDDBuilder bt2(table2);
         MDD::MDD* mdd2 = bt2.Build();
         checkMDD(mdd1);
 
@@ -187,7 +187,7 @@ TEST_CASE("test MISP relax creation") {
 
           // Exact one
           MISPDP misp(misp_bench.Neighbors(), misp_bench.Costs());
-          MDDBuilderDynP dpc(&misp, nb_vars, nb_values);
+          DynProgMDDBuilder dpc(&misp, nb_vars, nb_values);
           auto mdde = dpc.Build();
           Reduce rd(*mdde);
           checkMDD(mdde);
@@ -239,7 +239,7 @@ TEST_CASE("test Alldiff DP relax creation") {
             int max_depth = depth;
             // Exact one
             AllDifferentDP sdp(nb_values);
-            MDDBuilderDynP dpc(&sdp, nb_vars, nb_values);
+            DynProgMDDBuilder dpc(&sdp, nb_vars, nb_values);
             auto mdde = dpc.Build();
             Reduce rd(*mdde);
             checkMDD(mdde);

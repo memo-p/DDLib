@@ -31,7 +31,7 @@
 #include <MISP/bench.hpp>
 #include <SetCover/bench.hpp>
 
-#include "Constructions/BuilderFromDynProg.hpp"
+#include "Builders/DynProg.hpp"
 #include "DynamicProg/ApplyDP.hpp"
 #include "Help/testHelper.hpp"
 #include "Operations/Apply.hpp"
@@ -71,7 +71,7 @@ TEST_CASE("test SetCover relax creation") {
 
                 // Exact one
                 SetCoverDP sc(sc_bench.RowsMembership(), sc_bench.Costs());
-                MDDBuilderDynP dpc(&sc, nb_vars, nb_values);
+                DynProgMDDBuilder dpc(&sc, nb_vars, nb_values);
                 auto mdde = dpc.Build();
                 Reduce rd(*mdde);
                 checkMDD(mdde);

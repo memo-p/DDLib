@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,37 +22,44 @@
  * SOFTWARE.
  */
 
-#ifndef SRC_CONSTRUCTIONS_MDDBUILDERGRID
-#define SRC_CONSTRUCTIONS_MDDBUILDERGRID
+#ifndef MDD_BUILDERS_TABLE
+#define MDD_BUILDERS_TABLE
 
 #include <stdio.h>
+
+#include "Builders/base.hpp"
 #include "Core/MDD.hpp"
-#include "Constructions/MDDBuilder.hpp"
+#include "DataStructures/Table.hpp"
+#include "DataStructures/TableSort.hpp"
 #include "Operations/Reduce.hpp"
 
 namespace MDD {
 
-class MDDBuilderGrid : public MDDBuilder {
-  void deleteBadNode();
-
+class TableMDDBuilder : public MDDBuilder {
  public:
-  MDDBuilderGrid(int size, int numState);
-  void addTransition(int start, int value, int end);
-  void addLastTransition(int start, int value, int end);
-  void addStartingTransition(int value, int end);
-  void addEndingTransition(int start, int value);
-  void addEndingLastTransition(int start, int value);
+  // the table must be sorted
+  TableMDDBuilder(TableOfTuple &table, int *order);
 
-  MDD* Build();
+  TableMDDBuilder(TableOfTuple &table)
+      : TableMDDBuilder(table, CountSort(table)) {
+    order_local_ = true;
+  }
+
+  ~TableMDDBuilder() {
+    if (order_local_) {
+      delete[] order_;
+    }
+    
+  }
+
+  MDD *Build();
 
  private:
-  MDD* mdd_;
-  int numState_;
-  int size_;
-  int nb_vals_;
-  std::vector<std::vector<Node*>> grid_;
+  TableOfTuple &table_;
+  int *order_;
+  bool order_local_;
 };
 
 }  // namespace MDD
 
-#endif /* SRC_CONSTRUCTIONS_MDDBUILDERGRID */
+#endif /* MDD_BUILDERS_TABLE */

@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-#include "Constructions/BuilderFromDynProg.hpp"
+#include "Builders/DynProg.hpp"
 
 #include <algorithm>  // for count
 namespace MDD {
 
-MDD* MDDBuilderDynP::Build() {
+MDD* DynProgMDDBuilder::Build() {
   chrono_build_.Start();
   mdd_ = new MDD(nb_vars_);
   mdd_->BuildRootAndFinalNodes();
@@ -46,7 +46,7 @@ MDD* MDDBuilderDynP::Build() {
 /**
  * Build the possibles arcs and create the associated states.
  **/
-void MDDBuilderDynP::BuildOutgoingArcs(Node* n) {
+void DynProgMDDBuilder::BuildOutgoingArcs(Node* n) {
   const int layer = n->VarIndex();
   const int layer_p1 = layer + 1;
   if (n->Arcs() == nullptr && layer < mdd_->Size()) {
@@ -60,7 +60,7 @@ void MDDBuilderDynP::BuildOutgoingArcs(Node* n) {
   }
 }
 
-Node* MDDBuilderDynP::BuildNodeForState(State* s, int layer) {
+Node* DynProgMDDBuilder::BuildNodeForState(State* s, int layer) {
   Node* end = nullptr;
   if (s) {
     if (node_4_state_[layer][s]) {

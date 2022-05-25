@@ -22,37 +22,52 @@
  * SOFTWARE.
  */
 
-#include "Constructions/BuilderTransitions.hpp"
+#ifndef MDD_BUILDERS_AUTOMATON
+#define MDD_BUILDERS_AUTOMATON
+
+#include <stdio.h>
+
+#include "Builders/base.hpp"
+#include "Builders/Grid.hpp"
+#include "Core/MDD.hpp"
+#include "Operations/Reduce.hpp"
+
 namespace MDD {
 
-const int MDDBuilderFromTransition::start_id = 0;
-const int MDDBuilderFromTransition::value_id = 1;
-const int MDDBuilderFromTransition::end_id = 2;
+/**
+ * Class used to build an MDD from an automaton.
+ * * Transition are of defined as follow:
+ * - t[0] = starting Node
+ * - t[1] = value
+ * - t[2] = ending Node
+ * 
+ * Note that all the states must be positive or null integers.
+ **/
+class AutomatonMDDBuilder : public MDDBuilder {
+ public:
+  AutomatonMDDBuilder(std::vector<std::vector<int>> const &transitions,
+                      int nb_vars, int start, std::vector<int> finals)
+      : transitions_(transitions),
+        nb_vars_(nb_vars),
+        start_(start),
+        finals_(finals) {}
 
-MDD *MDDBuilderFromTransition::Build() {
-  MDD *mdd = new MDD(nb_vars_);
-  mdd->BuildRootAndFinalNodes();
-  std::unordered_map<int, Node *> nodes;
-  nodes[0] = mdd->Root();
-  Node *start = nullptr;
-  Node *end = nullptr;
-  int v_max = 0;
-  for (auto &&t : transitions_) {
-    assert(nodes.find(t[start_id]) != nodes.end());
-    start = nodes[t[start_id]];
-    if (start->VarIndex() + 1 == nb_vars_) {
-      end = mdd->Final();
-    } else if (nodes.find(t[end_id]) != nodes.end()) {
-      end = nodes[t[end_id]];
-    } else {
-      end = mdd->createNode(start->VarIndex() + 1);
-      nodes[t[end_id]] = end;
-    }
-    start->AddArc(t[value_id], end);
-    v_max = (v_max < t[value_id])? t[value_id]:v_max;
-  }
-  mdd->setDomSize(v_max+1);
-  return mdd;
-}
+  MDD *Build();
+
+ private:
+  void ExtractNumberOfStates();
+
+  const std::vector<std::vector<int>> &transitions_;
+  const int nb_vars_;
+  int start_;
+  std::vector<int> finals_;
+  int nb_states_;
+  
+  static const int start_id;
+  static const int value_id;
+  static const int end_id;
+};
 
 }  // namespace MDD
+
+#endif /* MDD_BUILDERS_AUTOMATON */

@@ -23,8 +23,7 @@
  */
 #define CATCH_CONFIG_MAIN
 
-#include "Constructions/BuilderTransitions.hpp"
-#include "Constructions/MDDBuilderFromTable.hpp"
+#include "Builders/Transitions.hpp"
 #include "Core/MDD.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "Help/testHelper.hpp"
@@ -69,7 +68,7 @@ TEST_CASE("test of the DFS") {
                                         {1, 1, 3}, {2, 2, 3}, {2, 1, 4},
                                         {3, 0, 5}, {3, 1, 5}, {4, 0, 5}};
 
-  MDDBuilderFromTransition bt(arcs, 3);
+  TransitionMDDBuilder bt(arcs, 3);
   MDD::MDD* mdd = bt.Build();
   testDFS t(*mdd);
   t.Run();
@@ -111,7 +110,7 @@ TEST_CASE("test of the BFS") {
                                         {1, 1, 3}, {2, 2, 3}, {2, 1, 4},
                                         {3, 0, 5}, {3, 1, 5}, {4, 0, 5}};
 
-  MDDBuilderFromTransition bt(arcs, 3);
+  TransitionMDDBuilder bt(arcs, 3);
   MDD::MDD* mdd = bt.Build();
   testBFS t(*mdd);
   t.Run();
@@ -125,7 +124,7 @@ TEST_CASE("test of the number of solution") {
     TableOfTuple* tableptr1 =
         MakeRandomTable(nb_vars, domains, nb_tuples_1, seed);
     TableOfTuple& table1 = *tableptr1;
-    MDDBuilderFromTable bt1(table1);
+    TableMDDBuilder bt1(table1);
     MDD::MDD* mdd1 = bt1.Build();
     checkMDD(mdd1);
     CHECK(CountTuples(*mdd1) == table1.NumberOfTuples());

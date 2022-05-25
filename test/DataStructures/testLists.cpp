@@ -24,9 +24,9 @@
 
 #define CATCH_CONFIG_MAIN
 
-#include "Constructions/BuilderTransitions.hpp"
-#include "Constructions/MDDBuilderFromTable.hpp"
-#include "Constructions/MDDBuilderGrid.hpp"
+#include "Builders/Transitions.hpp"
+#include "Builders/Table.hpp"
+#include "Builders/Grid.hpp"
 #include "DataStructures/TableBuilder.hpp"
 #include "DataStructures/TableSort.hpp"
 #include "catch.hpp"

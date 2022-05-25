@@ -22,41 +22,37 @@
  * SOFTWARE.
  */
 
-#include <algorithm> // for count
-#include "Constructions/BuilderFromAutomaton.hpp"
+#include "Builders/Transitions.hpp"
 namespace MDD {
 
-const int MDDBuilderAutomaton::start_id = 0;
-const int MDDBuilderAutomaton::value_id = 1;
-const int MDDBuilderAutomaton::end_id = 2;
+const int TransitionMDDBuilder::start_id = 0;
+const int TransitionMDDBuilder::value_id = 1;
+const int TransitionMDDBuilder::end_id = 2;
 
-MDD *MDDBuilderAutomaton::Build() {
-  ExtractNumberOfStates();
-  MDDBuilderGrid bt(nb_vars_, nb_states_);
+MDD *TransitionMDDBuilder::Build() {
+  MDD *mdd = new MDD(nb_vars_);
+  mdd->BuildRootAndFinalNodes();
+  std::unordered_map<int, Node *> nodes;
+  nodes[0] = mdd->Root();
+  Node *start = nullptr;
+  Node *end = nullptr;
+  int v_max = 0;
   for (auto &&t : transitions_) {
-    if (t[start_id] == start_) {
-      bt.addStartingTransition(t[value_id], t[end_id]);
+    assert(nodes.find(t[start_id]) != nodes.end());
+    start = nodes[t[start_id]];
+    if (start->VarIndex() + 1 == nb_vars_) {
+      end = mdd->Final();
+    } else if (nodes.find(t[end_id]) != nodes.end()) {
+      end = nodes[t[end_id]];
+    } else {
+      end = mdd->createNode(start->VarIndex() + 1);
+      nodes[t[end_id]] = end;
     }
-    bt.addTransition(t[start_id], t[value_id], t[end_id]);
-    if (std::count(finals_.begin(), finals_.end(), t[end_id]))
-    {
-      bt.addEndingTransition(t[start_id], t[value_id]);
-    }
+    start->AddArc(t[value_id], end);
+    v_max = (v_max < t[value_id])? t[value_id]:v_max;
   }
-  return bt.Build();
-}
-
-void MDDBuilderAutomaton::ExtractNumberOfStates() {
-  nb_states_ = 0;
-  for (auto &&t : transitions_) {
-    if (t[start_id] > nb_states_) {
-      nb_states_ = t[start_id];
-    }
-    if (t[end_id] > nb_states_) {
-      nb_states_ = t[end_id];
-    }
-  }
-  nb_states_++;
+  mdd->setDomSize(v_max+1);
+  return mdd;
 }
 
 }  // namespace MDD

@@ -28,10 +28,10 @@
 #include "Core/MDD.hpp"
 
 // Builders
-#include "Constructions/BuilderFromAutomaton.hpp"
-#include "Constructions/BuilderTransitions.hpp"
-#include "Constructions/MDDBuilderFromTable.hpp"
-#include "Constructions/MDDBuilderGrid.hpp"
+#include "Builders/Automaton.hpp"
+#include "Builders/Transitions.hpp"
+#include "Builders/TableBuilder.hpp"
+#include "Builders/Grid.hpp"
 
 // Reduction
 #include "Operations/Reduce.hpp"

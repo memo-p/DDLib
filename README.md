@@ -7,9 +7,9 @@ A MDD contains _Node_ objects and _Node_ Objects contain _Arc_ objects.
 They are the main, and only, different objects that any user need to be aware of.
 
 ### Creation
-Obtaining an MDD can be done using either a table (i.e. a set of tuples) (_MDDBuilderFromTable_) ,
-using an automaton (_MDDBuilderAutomaton_), using some predefined MDD (_MDDBuilderFromTransition_),
-or using the grid automatic construction (_MDDBuilderGrid_).
+Obtaining an MDD can be done using either a table (i.e. a set of tuples) (_TableMDDBuilder_) ,
+using an automaton (_AutomatonMDDBuilder_), using some predefined MDD (_TransitionMDDBuilder_),
+or using the grid automatic construction (_MDDMDDBuilderGrid_).
 
 Here is an example of creation using a table of tuples.
 ```C++
@@ -18,7 +18,7 @@ Here is an example of creation using a table of tuples.
       {1, 1, 1}, {0, 0, 1}, {0, 1, 0}, {0, 0, 0}};
   table.addTuples(tuples);
 
-  MDDBuilderFromTable bt(table);
+  TableMDDBuilder bt(table);
   MDD::MDD* mdd = bt.Build();
 ```
 

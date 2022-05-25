@@ -23,7 +23,7 @@
  */
 #define CATCH_CONFIG_MAIN
 
-#include "Constructions/BuilderTransitions.hpp"
+#include "Builders/Transitions.hpp"
 #include "Core/MDD.hpp"
 #include "Help/testHelper.hpp"
 #include "Operations/Reduce.hpp"
@@ -37,7 +37,7 @@ TEST_CASE("test of the DFS") {
       {3, 0, 5}, {3, 1, 5}, {4, 0, 5}, {3, 0, 5}, {3, 1, 5},
   };
 
-  MDDBuilderFromTransition bt(arcs, 3);
+  TransitionMDDBuilder bt(arcs, 3);
   MDD::MDD* mdd = bt.Build();
   SECTION("Using DFS map reduce") {
     ReduceDFSMap r_dfs(*mdd);

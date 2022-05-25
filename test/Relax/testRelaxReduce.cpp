@@ -28,8 +28,8 @@
 
 #include "Help/testHelper.hpp"
 #include "Relax/Reduction/reduce.hpp"
-#include "Constructions/BuilderFromAutomaton.hpp"
-#include "Constructions/BuilderTransitions.hpp"
+#include "Builders/Automaton.hpp"
+#include "Builders/Transitions.hpp"
 #include "Relax/Utils.hpp"
 #include "catch.hpp"
 
@@ -40,7 +40,7 @@ std::vector<std::vector<int>> transitions = {{0, 0, 1}, {0, 1, 2}, {1, 0, 3},
                                           {1, 1, 3}, {2, 2, 3}, {2, 1, 4},
                                           {3, 0, 5}, {3, 1, 5}, {4, 0, 5}};
 
-  MDDBuilderFromTransition bt(transitions, 3);
+  TransitionMDDBuilder bt(transitions, 3);
   MDD::MDD* mdd = bt.Build();
   checkMDD(mdd);
   Partitioner p;
@@ -66,7 +66,7 @@ TEST_CASE("test relax reduce automaton") {
     {2, 0, 0}, {2, 1, 1}, {2, 3, 3},
     {3, 0, 0}, {3, 1, 1}, {3, 2, 2}};
 
-  MDDBuilderAutomaton bt(transitions, 4, 0, {0, 1, 2, 3});
+  AutomatonMDDBuilder bt(transitions, 4, 0, {0, 1, 2, 3});
   MDD::MDD* mdd = bt.Build();
   checkMDD(mdd);
   // Draw(*mdd);
@@ -78,7 +78,7 @@ TEST_CASE("test relax reduce automaton") {
 
   TableOfTuple table(4, {4,4,4,4});
   {
-    MDDBuilderAutomaton bt2(transitions, 4, 0, {0, 1, 2, 3});
+    AutomatonMDDBuilder bt2(transitions, 4, 0, {0, 1, 2, 3});
     MDD::MDD* mdd2 = bt2.Build();
     FillTable(*mdd2,&table);
   }
@@ -93,7 +93,7 @@ TEST_CASE("test relax reduce tablerandom creation") {
     TableOfTuple* tableptr = MakeRandomTable(5, {4, 4, 3, 2, 5}, 50, seed);
     TableOfTuple& table = *tableptr;
 
-    MDDBuilderFromTable bt(table);
+    TableMDDBuilder bt(table);
     MDD::MDD* mdd = bt.Build();
     checkMDD(mdd);
     SECTION("last part") {

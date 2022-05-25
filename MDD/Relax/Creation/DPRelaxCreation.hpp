@@ -29,7 +29,7 @@
 
 #include <unordered_map>
 
-#include "Constructions/MDDBuilder.hpp"
+#include "Builders/base.hpp"
 #include "Core/MDD.hpp"
 #include "Relax/Reduction/reduce.hpp"
 #include "DynamicProg/DynP.hpp"

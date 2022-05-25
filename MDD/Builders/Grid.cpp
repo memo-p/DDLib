@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-#include "MDDBuilderGrid.hpp"
+#include "Grid.hpp"
 
 namespace MDD {
 
-MDDBuilderGrid::MDDBuilderGrid(int size, int numState)
+GridMDDBuilder::GridMDDBuilder(int size, int numState)
     : mdd_(new MDD(size)), numState_(numState), size_(size), nb_vals_(0) {
   mdd_->BuildRootAndFinalNodes();
   grid_.resize(size_ - 1);
@@ -38,39 +38,39 @@ MDDBuilderGrid::MDDBuilderGrid(int size, int numState)
   }
 }
 
-void MDDBuilderGrid::addTransition(int start, int value, int end) {
+void GridMDDBuilder::addTransition(int start, int value, int end) {
   nb_vals_ = (nb_vals_ < value)? value : nb_vals_;
   for (int depth = 0; depth < size_ - 2; ++depth) {
     grid_[depth][start]->AddArc(value, grid_[(1 + depth)][end]);
   }
 }
-void MDDBuilderGrid::addLastTransition(int start, int value, int end) {
+void GridMDDBuilder::addLastTransition(int start, int value, int end) {
   nb_vals_ = (nb_vals_ < value)? value : nb_vals_;
   for (int depth = 0; depth < size_ - 2; ++depth) {
     grid_[depth][start]->AddArcLast(value, grid_[(1 + depth)][end]);
   }
 }
-void MDDBuilderGrid::addStartingTransition(int value, int end) {
+void GridMDDBuilder::addStartingTransition(int value, int end) {
   nb_vals_ = (nb_vals_ < value)? value : nb_vals_;
   mdd_->Root()->AddArc(value, grid_.front()[end]);
 }
-void MDDBuilderGrid::addEndingTransition(int start, int value) {
+void GridMDDBuilder::addEndingTransition(int start, int value) {
   nb_vals_ = (nb_vals_ < value)? value : nb_vals_;
   grid_.back()[start]->AddArc(value, mdd_->Final());
 }
-void MDDBuilderGrid::addEndingLastTransition(int start, int value) {
+void GridMDDBuilder::addEndingLastTransition(int start, int value) {
   nb_vals_ = (nb_vals_ < value)? value : nb_vals_;
   grid_.back()[start]->AddArcLast(value, mdd_->Final());
 }
 
-MDD* MDDBuilderGrid::Build() {
+MDD* GridMDDBuilder::Build() {
   mdd_->setDomSize(nb_vals_+1);
   deleteBadNode();
   Reduce r(*mdd_);
   return mdd_;
 }
 
-void MDDBuilderGrid::deleteBadNode() {
+void GridMDDBuilder::deleteBadNode() {
   Arc *e, *e_next;
   for (int i = 0; i < size_ - 1; ++i) {
     for (int j = 0; j < numState_; j++) {
