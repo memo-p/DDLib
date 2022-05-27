@@ -28,6 +28,14 @@
 
 namespace MDD {
 
+/**
+ * @brief List element class.
+ * 
+ * This class mainly add the fields @p next_ and 
+ * @p prev_ to the class @p T.
+ * 
+ * @tparam T Type of object to be linked.
+ */
 template <class T>
 class DblListElement {
  public:
@@ -36,7 +44,9 @@ class DblListElement {
 
   DblListElement() : next_(nullptr), prev_(nullptr) {}
   /**
-   * This method put an element next to this.
+   * @brief Put element @p elem next to this.
+   * 
+   * Complexity: Constant time.
    **/
   void AddNextList(T* elem) {
     elem->next_ = next_;
@@ -48,7 +58,9 @@ class DblListElement {
   }
 
   /**
-   * This method put an element before this.
+   * @brief Put element @p elem before this.
+   * 
+   * Complexity: Constant time.
    **/
   void AddPrevList(T* elem) {
     elem->next_ = (T*)this;
@@ -60,7 +72,9 @@ class DblListElement {
   }
 
   /**
-   * This method remove this element from the list.
+   * @brief Remove this element from the list.
+   * 
+   * Complexity: Constant time.
    **/
   void RemoveList() {
     if (prev_ != nullptr) {
@@ -72,11 +86,29 @@ class DblListElement {
     next_ = nullptr;
     prev_ = nullptr;
   }
-
+  /**
+   * @brief Return the next element in the list.
+   * 
+   * @return T* next element or nullptr.
+   * 
+   * Complexity: Constant time.
+   */
   T* Next() { return next_; }
+  /**
+   * @brief Return the previous element in the list.
+   * 
+   * @return T* previous element or nullptr.
+   * 
+   * Complexity: Constant time.
+   */
   T* Prev() { return prev_; }
 };
 
+/**
+ * @brief List of @p DblListElement<T> elements.
+ * 
+ * @tparam T Class of the elements.
+ */
 template <class T>
 class DblList {
  public:
@@ -87,7 +119,9 @@ class DblList {
   DblList() : first_(nullptr), last_(nullptr), size_(0) {}
 
   /**
-   * Add a new element at the begining of the list.
+   * @brief Add element @p elem at the beginning of this list.
+   * 
+   * Complexity: Constant time.
    **/
   void AddFirst(T* elem) {
     assert(elem->Next() == nullptr);
@@ -105,7 +139,9 @@ class DblList {
   }
 
   /**
-   * Add a new element at the end of the list.
+   * @brief Add element @p elem at the end of this list.
+   * 
+   * Complexity: Constant time.
    **/
   void AddLast(T* elem) {
     assert(elem->Next() == nullptr);
@@ -122,7 +158,9 @@ class DblList {
   }
 
   /**
-   * Add a @param new_element after @param present_element.
+   * @brief Add @p new_elem after @p present_elem in this list.
+   * 
+   * Complexity: Constant time.
    **/
   void AddAfter(T* new_elem, T* present_elem) {
     assert(new_elem->Next() == nullptr);
@@ -143,7 +181,9 @@ class DblList {
   }  
   
   /**
-   * Add a @param new_element Before @param present_element.
+   * @brief Add @p new_elem before @p present_elem.
+   * 
+   * Complexity: Constant time.
    **/
   void AddBefore(T* new_elem, T* present_elem) {
     assert(new_elem->Next() == nullptr);
@@ -164,7 +204,9 @@ class DblList {
   }
 
   /**
-   * remove an element of the list.
+   * @brief Remove element @p elem of this list.
+   * 
+   * Complexity: Constant time.
    **/
   void Remove(T* elem) {
     if (elem->next_ != nullptr) {
@@ -182,8 +224,10 @@ class DblList {
   }
 
   /**
-   * Append the given list at the end of this list.
-   * Note that this will clear the list given in argument.
+   * @brief Append the list @p l at the end of this list.
+   * Note that this will clear list @p l after.
+   * 
+   * Complexity: Constant time.
    **/
   void Append(DblList<T>& l) {
     if (size_) {
@@ -201,8 +245,10 @@ class DblList {
   }
 
   /**
-   * Reset the data structures of the list.
+   * @brief Reset the data structures of the list.
    * The list will be emptied.
+   * 
+   * Complexity: Constant time.
    **/
   void Clear() {
     first_ = nullptr;
@@ -210,10 +256,28 @@ class DblList {
     size_ = 0;
   }
 
+  /**
+   * @brief Return the first element of the list.
+   * 
+   * The next element is accessible through method @p DblListElement<T>::Next() .
+   * 
+   * Complexity: Constant time.
+   */
   T* First() const { return first_; }
-
+  /**
+   * @brief Return the last element of the list.
+   * 
+   * The previous element is accessible through method @p DblListElement<T>::Prev() .
+   * 
+   * Complexity: Constant time.
+   */
   T* Last() const { return last_; }
 
+  /**
+   * @brief return the number of element of the list.
+   * 
+   * Complexity: Constant time.
+   */
   int Size() const { return size_; }
 };
 

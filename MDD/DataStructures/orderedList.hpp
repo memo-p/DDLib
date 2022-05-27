@@ -30,13 +30,24 @@
 namespace MDD {
 
 /**
- * Increasingly ordered list template.
+ * @brief Increasingly ordered list template.
+ * 
+ * @tparam T Type of object to be linked. 
+ * This type must have methods Value().
  **/
 template <class T>
 class DblOrderedList : public DblList<T> {
 
  public:
- 
+  
+  /**
+   * @brief Add element @p elem to this list.
+   * 
+   * @param elem Element to be added.
+   * 
+   * Complexity: Linear time over the number of element in the  worst-case.
+   * 
+   */
   void Add(T* elem) {
     if (DblList<T>::size_) {  // List is not empty
       T* e = DblList<T>::first_;
@@ -59,7 +70,15 @@ class DblOrderedList : public DblList<T> {
     }
     DblList<T>::size_++;
   }
-
+  
+  /**
+   * @brief Find element with value @p value in this list.
+   * 
+   * @param value Value of the element to find.
+   * 
+   * Complexity: Linear time over the number of element in the  worst-case.
+   * 
+   */
   T* Find(int value) const{
     T* e = DblList<T>::first_;
     while (e && e->Value() != value) {
