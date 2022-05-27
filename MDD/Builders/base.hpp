@@ -33,6 +33,8 @@ namespace MDD {
 class MDDBuilder {
 public:
     
+    virtual ~MDDBuilder() = default;
+    
     virtual MDD * Build() = 0;
     
 };

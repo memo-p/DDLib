@@ -36,7 +36,7 @@
 #include "Operations/Apply.hpp"
 #include "Operations/ReduceDFSMap.hpp"
 #include "Relax/Creation/DPRelaxCreation.hpp"
-#include "Relax/Partitioners/setPartitioner.hpp"
+#include "Partitioners/setPartitioner.hpp"
 #include "Relax/Utils.hpp"
 #include "catch.hpp"
 

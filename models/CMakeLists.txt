@@ -5,6 +5,7 @@ AllDifferent.hpp
 DynSum.hpp
 IndepSet.hpp
 SetCover.hpp
+Partitioners/setPartitioner.hpp
 )
 
 set(LIB_NAME "DP-models")

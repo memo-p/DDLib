@@ -30,7 +30,7 @@
 // Builders
 #include "Builders/Automaton.hpp"
 #include "Builders/Transitions.hpp"
-#include "Builders/TableBuilder.hpp"
+#include "Builders/Table.hpp"
 #include "Builders/Grid.hpp"
 
 // Reduction
@@ -42,8 +42,6 @@
 #include "Operations/Apply.hpp"
 
 // Relax
-#include "DynamicProg/DynSum.hpp"
-#include "DynamicProg/IndepSet.hpp"
 #include "Relax/Creation/DPRelaxCreation.hpp"
 #include "Relax/Reduction/reduce.hpp"
 

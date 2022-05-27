@@ -51,16 +51,16 @@ Reduce::Reduce(MDD& mdd)
   for (int layer = mdd.getSize() - 1; layer >= 0;
        layer--) {  // update of the arcs (bottom up)
 
-    currentLayerSize = ArcsUpdateRaddixInit(layer);
+    currentLayerSize = ArcsUpdateRadixInit(layer);
     // Optim: all the arcs from last layer terminate on the same node ?
     raddix_mode = true;
     swap_status = true;
     over = escape_edge_.Value();
     while (currentLayerSize > 1) {
-      RaddixCount(LayerID());
+      RadixCount(LayerID());
       // # of final pack (either alone or equiv)
       delta = raddix_count_[over];
-      RaddixCumulative();
+      RadixCumulative();
       Permutation(LayerID(), LayerIDNext());
 
       swap_status = !swap_status;  // SWAP
@@ -72,9 +72,9 @@ Reduce::Reduce(MDD& mdd)
         break;
       }
       if (raddix_mode) {
-        PrepareNextRaddixLabel();
+        PrepareNextRadixLabel();
       } else {
-        PrepareNextRaddixNode();
+        PrepareNextRadixNode();
       }
       raddix_mode = !raddix_mode;
     }
@@ -84,7 +84,7 @@ Reduce::Reduce(MDD& mdd)
   mdd.clearDel();
 }
 
-int Reduce::ArcsUpdateRaddixInit(int layer) {
+int Reduce::ArcsUpdateRadixInit(int layer) {
   layer_size = 0;
   n = mdd_.getNodeLvl(layer);
   while (n) {
@@ -116,7 +116,7 @@ int Reduce::ArcsUpdateRaddixInit(int layer) {
   return layer_size;
 }
 
-void Reduce::RaddixCount(std::vector<int>& l_id) {
+void Reduce::RadixCount(std::vector<int>& l_id) {
   for (int n_id = 0; n_id < currentLayerSize; n_id++) {
     const int e_val = layer_values_[l_id[n_id]];
     if (raddix_count_[e_val]++ == 0) {
@@ -125,7 +125,7 @@ void Reduce::RaddixCount(std::vector<int>& l_id) {
   }
 }
 
-void Reduce::RaddixCumulative() {
+void Reduce::RadixCumulative() {
   id = non_null_raddix_[0];
   if (id == over) {
     id = non_null_raddix_.back();
@@ -179,7 +179,7 @@ void Reduce::LeadManagement(unionFind& lead_1, unionFind& lead_2,
   }
 }
 
-void Reduce::PrepareNextRaddixLabel() {
+void Reduce::PrepareNextRadixLabel() {
   for (int n_id = 1; n_id < currentLayerSize;
        n_id++) {  // manage pack of size 1
     id = layer_ids_2_[n_id];
@@ -199,7 +199,7 @@ void Reduce::PrepareNextRaddixLabel() {
   over = escape_node_.info1_;
 }
 
-void Reduce::PrepareNextRaddixNode() {
+void Reduce::PrepareNextRadixNode() {
   id = layer_ids_1_[0];
   layer_arcs_[id] = (layer_arcs_[id]->next_ == nullptr)
                         ? &escape_edge_

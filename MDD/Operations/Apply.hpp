@@ -97,7 +97,7 @@ class Apply {
   MDD* Run();
   /**
    * Create an temporary node that represents the couple 
-   * (@param ter1, @param ter2). Create an arc directed to this 
+   * (@p ter1, @p ter2). Create an arc directed to this 
    * node. (Note that until the merge of temporary is done in
    * BuildLayer, the arc point to ter2).
    * 
@@ -121,7 +121,7 @@ class Apply {
    * 
    * Algorithm 8 : PhD Thesis GP
    **/
-  void BuildOutgoindArcs();
+  void BuildOutgoingArcs();
   /**
    * Iterate over the newly created nodes.
    * For each of them, that are couples (ni,nj),
@@ -131,7 +131,7 @@ class Apply {
    * 
    * Algorithm 8 : PhD Thesis GP
    **/
-  void BuildOutgoindArcsValueBased();
+  void BuildOutgoingArcsValueBased();
 
   /**
    * The creation of an arc labeled by 'a', given (ni,nj),

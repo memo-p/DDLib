@@ -32,6 +32,13 @@
 
 namespace MDD {
 
+/**
+ * @brief Base class for the MDD operation.
+ * 
+ * it is used to represent couples of nodes from
+ * distinct MDDs during operations.
+ * 
+ */
 class Triplet {
  public:
   static thread_local Triplet *allocated;

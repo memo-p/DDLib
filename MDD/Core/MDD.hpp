@@ -34,26 +34,40 @@
 #include "DataStructures/list.hpp"
 #include "DataStructures/orderedList.hpp"
 
+// Number of consecutive allocations to be made in the new.
 #define NBALLOC 1000000
+
 namespace MDD {
 
 class Node;
+
 /**
  * Base class of the MDD arcs.
  **/
 class Arc : public DblListElement<Arc> {
  public:
+ /**
+  * @brief Link to the previously allocated nodes.
+  * Used by the new and delete redefinition.
+  */
   static thread_local Arc *allocated;
 
   void *operator new(std::size_t count);
 
   void operator delete(void *ptr);
 
+  /**
+   * @brief Construct a new Arc object.
+   * 
+   * @param start starting node of the arc.
+   * @param end ending node of the arc.
+   * @param value label of the arc.
+   */
   Arc(Node *start, Node *end, int value)
       : start_(start), end_(end), red_arc_(nullptr), value_(value) {}
 
   /**
-   * Return the label of the arc.
+   * Return the value (label) of the arc.
    **/
   int Value() const { return value_; }
   /**
@@ -65,206 +79,376 @@ class Arc : public DblListElement<Arc> {
    **/
   Node *End() const { return end_; }
 
-  Node *start_;   // starting node
-  Node *end_;     // ending node
-  Arc *red_arc_;  // tmp arc for apply
-  int value_;     // label
-  int info1_;     // unique id
+  /**
+   * @brief Starting node of the arc.
+   */
+  Node *start_;
+  /**
+   * @brief Ending node of the arc.
+   */
+  Node *end_;
+  /**
+   * @brief Temporary arc used by the Apply operator.
+   */
+  Arc *red_arc_;
+  /**
+   * @brief Value (label) of the arc.
+   */
+  int value_;
 };
 
+/**
+ * @brief Base class for the node of an MDD.
+ * 
+ */
 class Node : public DblListElement<Node> {
  public:
+  /**
+  * @brief Link to the previously allocated nodes.
+  * Used by the new and delete redefinition.
+  */
   static thread_local Node *allocated;
 
   void *operator new(std::size_t count);
   void operator delete(void *ptr);
 
   /**
-   * Add an arc labeled by @param value and directed to
-   * @param n.
-   * A search for the position of the arc is done linearly.
+   * @brief Add an arc labeled by @p value and directed to
+   * @p n to the current outgoing arcs of this node.
    *
-   * If an arc with label @param value already exists,
+   * If an arc with label @p value already exists,
    * its destination is updated.
+   *
+   * Complexity: A search for the position of the arc is done linearly.
+   *
+   * @param value Value (label) of the arc.
+   * @param n Ending node.
    **/
   Arc *AddArc(int value, Node *n);
 
   /**
-   * Add an arc labeled by @param value and directed to
-   * @param n.
-   * No search is done, the arc is directly put on the back of the arc list.
+   * @brief Add an arc labeled by @p value and directed to
+   * @p n to the current outgoing arcs of this node.
+   *
+   * Complexity: No search is done, the arc is directly put on the back of the
+   * arc list.
+   *
+   * @param value Value (label) of the arc.
+   * @param n Ending node.
    **/
   void AddArcLast(int value, Node *n);
 
   /**
-   * Add an arc labeled by @param value and directed to
-   * @param n.
-   * No search is done, the arc is directly put on the front of the arc list.
+   * @brief Add an arc labeled by @p value and directed to
+   * @p n to the current outgoing arcs of this node.
+   * 
+   * Complexity: No search is done, the arc is directly put on the front of the arc list.
+   * 
+   * @param value Value (label) of the arc.
+   * @param n Ending node.
    **/
   void AddArcFirst(int value, Node *n);
 
   /**
-   * Add an arc labeled by @param value and directed to
-   * @param n.
-   * No search is done, the arc is directly put after @param a.
+   * @brief Add an arc labeled by @p value and directed to
+   * @p n after arc @p a in outgoing arcs list of this node.
+   * 
+   * Complexity: No search is done, the arc is directly put after Arc @p a.
+   * 
+   * @param value Value (label) of the arc.
+   * @param n Ending node.
+   * @param a arc in the list of outgoing arcs of this node. 
    **/
   void AddArcAfter(int value, Node *n, Arc *a);
 
   
   /**
-   * Add an arc labeled by @param value and directed to
-   * @param n.
-   * No search is done, the arc is directly put before @param a.
+   * @brief Add an arc labeled by @p value and directed to
+   * @p n before arc @p a in outgoing arcs list of this node.
+   * 
+   * Complexity: No search is done, the arc is directly put before @p a.
+   * @param value Value (label) of the arc.
+   * @param n Ending node.
+   * @param a arc in the list of outgoing arcs of this node. 
    **/
   void AddArcBefore(int value, Node *n, Arc *a);
 
   /**
-   * Return the arc labeled by @param value
+   * @brief Return the arc labeled by @p value
    * if it exists, nullptr otherwise.
+   * 
+   * Complexity: A search for the position of the arc is done linearly.
+   * 
+   * @param value Value (label) of the arc.
    **/
   Arc *get(int value) const;
 
   /**
-   * Update the destination of a given arc
+   * @brief Change the ending node of arc @p a to node @p newEnd.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param a arc in the list of outgoing arcs of this node. 
+   * @param newEnd The new ending node.
    **/
-  void updateArc(Arc *e, Node *newEnd);
+  void updateArc(Arc *a, Node *newEnd);
 
   /**
-   * Remove the arc @param e from the arc list.
-   * Note that the function also delete @param e.
+   * @brief Remove the arc @p a from the arc list.
+   * Note that the function also delete @p a.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param a arc in the list of outgoing arcs of this node. 
    **/
-  void deleteArc(Arc *e);
+  void deleteArc(Arc *a);
 
   /**
-   * return the arc with the smallest value.
+   * @brief Return the first arc of the outgoing arcs of this node.
+   * 
+   * Note that the arc is the one with the smallest value.
+   * 
+   * Complexity: Constant time.
    **/
   Arc *Arcs() const { return arcs_.First(); }
 
   /**
-   * return the arc with the Largest value.
+   * @brief Return the last arc of the outgoing arcs of this node.
+   * 
+   * Note that the arc is the one with the largest value.
+   * 
+   * Complexity: Constant time.
    **/
   Arc *lastArc() const { return arcs_.Last(); }
 
   /**
-   * return the index of the variable represented by the node.
+   * @brief Return the index of the variable represented by the node.
+   * 
+   * Complexity: Constant time.
    **/
   int VarIndex() const { return var_index_; }
 
   /**
-   *
+   * @brief Conversion of the node into a string describing it.
+   * 
+   * Note that equivalent node have the same string.
+   * 
+   * Complexity: Linear time with respect to the number of arcs.
    **/
   std::string to_string();
+
+  /**
+   * @brief Return the number of outgoing arcs.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @return int the number of outgoing arcs.
+   */
   int OutDegree() const { return arcs_.Size(); }
+
+  /**
+   * @brief Return the number of incoming arcs.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @return int the number of incoming arcs.
+   */
   int InDegree() const { return nb_in_; }
+
+  /**
+   * @brief Return the unique id of the node.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @return int the unique id of the node.
+   */
   int UID() const { return id_; }
 
+/**
+ * @brief Construct a new Node object.
+ * 
+ * @param varIndex Index of the variable that this node represents.
+ * @param id Unique id of the node.
+ */
   Node(int varIndex, int id)
       : id_(id),
         var_index_(varIndex),
         info1_(0),
-        info2_(0),
-        info3_(0),
         nb_in_(0),
         visited_(false),
-        red_arc_(nullptr),
-        red_next_(nullptr),
         newV_(this) {}
 
   int id_;         // unique id
   int var_index_;  // index of the var represented by the node
   int info1_;      // additional info if needed (used in some algorithms)
-  int info2_;      // additional info if needed (used in some algorithms)
-  int info3_;      // additional info if needed (used in some algorithms)
   int nb_in_;      // number of incoming arcs
   bool visited_;   // boolean used for DFS/BFS
   DblOrderedList<Arc> arcs_;  // ORDORED list of outgoing arcs
-  Arc *red_arc_;              // arc currently studied in the reduction
-  Node *red_next_;            // list of node for the reduction
   Node *newV_;                // new version after the merge
 };
 
+/**
+ * @brief Main Multi-valued Decision Diagram class of this Library.
+ * 
+ */
 class MDD {
  public:
   /**
-   * Base method for creating a Node.
-   **/
+   * @brief Create a Node object.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param var_id Index of the variable that the returned node represents.
+   * @return Node* A newly created node.
+   */
   Node *createNode(int var_id);
 
   /**
-   * Add a node to the list of nodes of its layer.
+   * @brief Add node @p n to the list of nodes of its layer.
+   * 
+   * Note that this method need to be called only 
    * If the node has been created outside of this MDD
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param n Node to be added to the MDD.
    **/
   void addList(Node *n);
 
   /**
-   * Remove a node to the list of nodes of its layer.
+   * @brief Remove node @p n from the list of nodes of its layer.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param n Node to be removed from the MDD.
    **/
   void removeList(Node *n);
 
   /**
-   * delete a node from the MDD and delete the ptr.
+   * @brief Delete a node from the MDD and delete the ptr.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param n Node to be removed from the MDD and deleted.
    **/
   void DeleteNode(Node *n);
 
   /**
-   * Remove node that are redundant
+   * @brief Remove nodes that are redundant.
+   * 
+   * Complexity: Linear time with respect to the size 
+   * of the MDD (i.e. nodes + arcs).
    **/
   void clean();
+  // TODO(DEV) put in reduce.
 
   /**
-   * Extract the layer @param layer from mdd @param mdd
+   * @brief Extract the layer @p layer from mdd @p mdd
    * and insert it into this.
+   * 
+   * Note that the layer is then removed from @p mdd.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param mdd MDD from which the layer is extracted.
+   * @param layer Id of the layer to be extracted.
    **/
   void addLayer(MDD &mdd, int layer);
 
   ~MDD() { clear(); }
 
   /**
-   * Remove all the arcs and nodes of the MDD.
+   * @brief Remove all the arcs and nodes of the MDD.
    *
-   * Called when the MDD need to be destroyed
+   * Note that this method is usually called when
+   * the MDD need to be deleted.
+   * Complexity: Linear time with respect to the size 
+   * of the MDD (i.e. nodes + arcs).
    **/
   void clear();
 
   /**
-   * Remove all the nodes present in the toDel array
+   * @brief Remove all the nodes present in the toDel array.
+   * 
+   * Complexity: Linear time with respect to the size 
+   * of the MDD (i.e. nodes + arcs).
    **/
   void clearDel();
 
   /**
-   * Return the number of layers.
+   * @brief Return the number of layers.
+   * 
+   * Complexity: Constant time.
    **/
   int getSize() const { return size_; }
-  int Size() const { return size_; }
-
   /**
-   * Return the first node of the layer @param lvl.
+   * @brief Return the number of layers.
+   * 
+   * Complexity: Constant time.
    **/
-  Node *getNodeLvl(int lvl) const { return nodes_[lvl].First(); }
-  const DblList<Node>& GetLayer(int lvl) const { return nodes_[lvl]; }
+  int Size() const { return size_; }
+// TODO(dev) remove one.
 
   /**
-   * Set the domain size of each layer individually
+   * @brief Return the first node of the layer @p layer.
+   * 
+   * Note that nodes of the same layer are linked together.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param layer Layer id.
+   **/
+  Node *getNodeLvl(int layer) const { return nodes_[layer].First(); }
+
+  /**
+   * @brief Return the list of nodes of the layer @p layer.
+   * 
+   * Complexity: Constant time.
+   * 
+   * @param layer Layer id.
+   **/
+  const DblList<Node>& GetLayer(int layer) const { return nodes_[layer]; }
+
+  /**
+   * @brief Set the domain size of each layer individually.
+   * 
+   * Complexity: Linear time with respect to the Size() of the MDD.
+   * 
+   * @param domSize Vector containing for each layer the number of values
+   * the arcs can have.
    **/
   void setDomSize(std::vector<int> domSize);
 
   /**
-   * Set the domain size of each layer individually
+   * @brief Set the domain size of each layer individually.
+   * 
+   * Complexity: Linear time with respect to the Size() of the MDD.
+   * 
+   * @param domSize Array containing for each layer the number of values
+   * the arcs can have.
    **/
   void setDomSize(int *domSize);
 
   /**
-   * Set the domain size to be the same for all the variables.
+   * @brief Set the domain size to be the same for all the variables.
+   * 
+   * Complexity: Linear time with respect to the Size() of the MDD.
+   * 
+   * @param domSize The number of values the arcs can have.
    **/
   void setDomSize(int domSize);
 
   /**
-   * Return the number of node of the largest layer.
+   * @brief Return the number of nodes of the largest layer.
+   * 
+   * Complexity: Linear time with respect to the Size() of the MDD.
    **/
   int largestLayerSize() const;
 
   /**
-   * Return the largest domain size.
+   * @brief Return the largest domain size.
+   * 
+   * Complexity: Constant time.
    **/
   int largestDomainSize() const {
     assert(maxDomSize_ >= 0);
@@ -272,18 +456,33 @@ class MDD {
   };
 
   /**
-   * Create root node and a final node.
+   * @brief Create a root node and a final node.
+   * 
+   * Complexity: Constant time.
    **/
   void BuildRootAndFinalNodes();
 
   /**
-   * Return true if the MDD contains such a tuple.
+   * @brief Return true if this MDD contains @p tuple .
+   * 
+   * Complexity: Linear time with respect to the Size() of the MDD.
    **/
   bool contains(std::vector<int> const &tuple) const;
 
+  /**
+   * @brief Return the root node of the MDD.
+   */
   Node *Root() const { return nodes_.front().First(); }
+  /**
+   * @brief Return the final true node of the MDD.
+   */
   Node *Final() const { return nodes_.back().Last(); }
 
+  /**
+   * @brief Construct a new MDD object.
+   * 
+   * @param size The number of layers of the MDD.
+   */
   MDD(int size)
       : nodes_(size + 1),
         domSize_(size),
@@ -294,10 +493,16 @@ class MDD {
         nb_nodes_(0),
         nb_arcs_(0) {}
 
-  std::vector<DblList<Node>> nodes_;  // vector of lists of nodes
-  std::vector<int> domSize_;  // domain size of the variable  [0, domSize_(i)[
+  /**
+   * @brief A vector of the list of nodes of each layer.
+   */
+  std::vector<DblList<Node>> nodes_;
+  /**
+   * @brief A vector of the domain size of each layer.
+   */
+  std::vector<int> domSize_;
   Node *toDel;                // buffer of node to del
-  int size_;                  // number of lvl
+  int size_;                  // number of layers
   int node_id_;               // current max ID
   int maxDomSize_;            // Maximal size of the domaine
   int nb_nodes_;              // number of nodes

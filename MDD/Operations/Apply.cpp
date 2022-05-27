@@ -63,9 +63,9 @@ MDD* Apply::Run() {
       op_yes_yes_ = op_yes_yes_last_;
     }
     if (op_not_not_ & op_) {
-      BuildOutgoindArcsValueBased();
+      BuildOutgoingArcsValueBased();
     } else {
-      BuildOutgoindArcs();
+      BuildOutgoingArcs();
     }
     BuildLayer();
   }
@@ -105,7 +105,7 @@ void Apply::BuildLayer() {
   }
 }
 
-void Apply::BuildOutgoindArcs() {
+void Apply::BuildOutgoingArcs() {
   while (L != NULL) {
     x = L->x_;
     x1 = L->x1_;
@@ -145,7 +145,7 @@ void Apply::BuildOutgoindArcs() {
   }
 }
 
-void Apply::BuildOutgoindArcsValueBased() {
+void Apply::BuildOutgoingArcsValueBased() {
   while (L != NULL) {
     x = L->x_;
     x1 = L->x1_;

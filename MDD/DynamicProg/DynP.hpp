@@ -43,6 +43,8 @@ namespace MDD {
  **/
 class DynamicProgram {
  public:
+  virtual ~DynamicProgram() = default;
+
  /**
    * Return a state representing the initial state of the DP.
    **/

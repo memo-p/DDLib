@@ -78,20 +78,20 @@ class Reduce {
   unionFind &Leader() { return (swap_status) ? leaders_1_ : leaders_2_; }
   unionFind &LeaderNext() { return (swap_status) ? leaders_2_ : leaders_1_; }
 
-  int ArcsUpdateRaddixInit(int layer);
+  int ArcsUpdateRadixInit(int layer);
 
-  void RaddixCount(std::vector<int> &l_id);
+  void RadixCount(std::vector<int> &l_id);
 
-  void RaddixCumulative();
+  void RadixCumulative();
 
   void Permutation(std::vector<int> &l_id_1, std::vector<int> &l_id_2);
 
   void LeadManagement(unionFind &lead_1, unionFind &lead_2,
                       std::vector<int> &l_id_1, std::vector<int> &l_id_2);
 
-  void PrepareNextRaddixLabel();
+  void PrepareNextRadixLabel();
 
-  void PrepareNextRaddixNode();
+  void PrepareNextRadixNode();
 
   void Merge(std::vector<int> &layer_id, unionFind &leader);
 

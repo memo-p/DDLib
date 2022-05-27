@@ -53,7 +53,7 @@ Relax/Utils.hpp
 set(LIB_NAME "MDD")
 add_library(${LIB_NAME} STATIC ${SOURCE} ${HEADERS})
 
-target_link_libraries(${LIB_NAME} infInt dkm)
+target_link_libraries(${LIB_NAME} infInt)
 
 target_compile_options(${LIB_NAME} PRIVATE ${CXX_FLAGS_REQUIRED})
 

@@ -28,7 +28,7 @@
 #include <Core/MDD.hpp>
 #include <Relax/Creation/DPRelaxCreation.hpp>
 #include <Relax/Partitioners/StatePartitioner.hpp>
-#include <Relax/Partitioners/setPartitioner.hpp>
+#include <Partitioners/setPartitioner.hpp>
 #include <cxxopts.hpp>
 #include <random>
 #include <unordered_map>
