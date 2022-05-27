@@ -8,7 +8,7 @@ SetCover/bench.hpp
 set(LIB_NAME "DP-benchmarks")
 add_library(${LIB_NAME} STATIC ${HEADERS})
 
-target_link_libraries(${LIB_NAME} MDD DP-models)
+target_link_libraries(${LIB_NAME} MDD MDD-Utils DP-models)
 
 target_compile_options(${LIB_NAME} PRIVATE ${CXX_FLAGS_REQUIRED})
 

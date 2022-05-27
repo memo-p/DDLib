@@ -12,7 +12,7 @@ endfunction(create_unit_test)
 
 
 
-set(LIBS_TEST MDD catch DP-models DP-benchmarks)
+set(LIBS_TEST MDD MDD-Utils catch DP-models DP-benchmarks)
 
 
 # The test program

@@ -47,6 +47,7 @@ if (NOT TARGET dkm)
 endif() 
 
 add_subdirectory(MDD)
+add_subdirectory(Utils)
 add_subdirectory(models)
 add_subdirectory(benchmarks)
 

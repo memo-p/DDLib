@@ -11,7 +11,7 @@ Partitioners/setPartitioner.hpp
 set(LIB_NAME "DP-models")
 add_library(${LIB_NAME} STATIC ${HEADERS})
 
-target_link_libraries(${LIB_NAME} MDD)
+target_link_libraries(${LIB_NAME} MDD MDD-Utils)
 
 target_compile_options(${LIB_NAME} PRIVATE ${CXX_FLAGS_REQUIRED})
 

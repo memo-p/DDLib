@@ -7,7 +7,7 @@ function(create_app  APPLICATION_NAME APP_SOURCE LIBS)
     set_target_properties(${APPLICATION_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/apps)
 endfunction(create_app)
 
-set(LIBS_APPS MDD DP-models DP-benchmarks cxxopts json-nlohmann)
+set(LIBS_APPS MDD MDD-Utils DP-models DP-benchmarks cxxopts json-nlohmann)
 
 # The apps program
 create_app(MISP src/MISP.cpp "${LIBS_APPS}")
