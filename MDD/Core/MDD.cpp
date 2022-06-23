@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include <string>
 
 #include "MDD.hpp"
 
@@ -124,7 +125,7 @@ void Node::deleteArc(Arc *e) {
 }
 
 std::string Node::to_string() {
-  std::string s = "";
+  std::string s("");
   Arc *a = Arcs();
   while (a) {
     s += "(" + std::to_string(a->Value()) + "," +
