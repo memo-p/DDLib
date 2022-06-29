@@ -26,6 +26,7 @@
 #define SRC_OPERATIONS_SEARCH
 
 #include <stdio.h>
+#include <functional>
 
 #include <queue>
 #include <unordered_map>
@@ -159,6 +160,51 @@ class BreadthFirstSearch {
    * Method called After the search ends.
    **/
   virtual void OnStop() {}
+};
+
+/**
+ * Base class to do a BFS on the MDD.
+ **/
+class BreadthFirstSearchCallback : public BreadthFirstSearch {
+ private:
+  std::function<void(Node *)> on_open_node_;
+  std::function<void(Node *)> on_close_node_;
+  std::function<void(Arc *)> on_arc_;
+  std::function<void()> on_start_;
+  std::function<void()> on_stop_;
+
+ public:
+  BreadthFirstSearchCallback(MDD &mdd, std::function<void(Node *)> const &on_open_node,
+                             std::function<void(Node *)> const &on_close_node,
+                             std::function<void(Arc *)> const &on_arc,
+                             std::function<void()> const &on_start,
+                             std::function<void()> const &on_stop)
+      : BreadthFirstSearch(mdd),
+        on_open_node_(on_open_node),
+        on_close_node_(on_close_node),
+        on_arc_(on_arc),
+        on_start_(on_start),
+        on_stop_(on_stop) {}
+
+  BreadthFirstSearchCallback(MDD &mdd)
+      : BreadthFirstSearchCallback(
+            mdd, [](Node *) {}, [](Node *) {}, [](Arc *) {}, []() {}, []() {}) {}
+
+  void SetOnOpenNode(std::function<void(Node *)> const &on_open_node) {
+    on_open_node_ = on_open_node;
+  }
+  void SetOnCloseNode(std::function<void(Node *)> const &on_close_node) {
+    on_close_node_ = on_close_node;
+  }
+  void SetOnArc(std::function<void(Arc *)> const &on_arc) { on_arc_ = on_arc; }
+  void SetOnStart(std::function<void()> const &on_start) { on_start_ = on_start; }
+  void SetOnStop(std::function<void()> const &on_stop) { on_stop_ = on_stop; }
+
+  void OnOpenNode(Node *n) override { on_open_node_(n); }
+  void OnCloseNode(Node *n) override { on_close_node_(n); }
+  void OnArc(Arc *a) override { on_arc_(a); }
+  void OnStart() override { on_start_(); }
+  void OnStop() override { on_stop_(); }
 };
 
 }  // namespace MDD
